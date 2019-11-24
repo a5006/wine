@@ -104,7 +104,7 @@ export default {
     createOrder(d){
       console.log(d)
    if(d.topay){
-        window.location.href = d.topay+'&backup=/me'
+        window.location.href = d.topay+'&backup=https://jhhy.vsapp.cn/mobile/me'
    }
     },
   },

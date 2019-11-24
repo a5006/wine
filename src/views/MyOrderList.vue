@@ -98,7 +98,7 @@ export default {
     // 支付
     handlePay(d){
       console.log(d)
-      window.location.href = `https://jhhy.vsapp.cn/mobile/pay/index?order_num=${this.order_num}&backup=/me`
+      window.location.href = `https://jhhy.vsapp.cn/mobile/pay/index?order_num=${this.order_num}&backup=https://jhhy.vsapp.cn/mobile/me`
     },
     onLoad() {
       this.queryOrderList()
