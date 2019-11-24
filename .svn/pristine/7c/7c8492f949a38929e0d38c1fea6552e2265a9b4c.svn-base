@@ -1,0 +1,269 @@
+
+<template>
+  <div>
+    <Gheader title="酒海会友" />
+    <!-- 通知栏 -->
+    <van-notice-bar :text="text" left-icon="volume-o" mode="link" @click="jumpNoticePage" />
+    <!-- 轮播 -->
+    <van-swipe :autoplay="3000" indicator-color="#E70002">
+      <van-swipe-item v-for="(image, index) in images" :key="index">
+        <img class="img" v-lazy="image" />
+      </van-swipe-item>
+    </van-swipe>
+    <!-- 宫格  -->
+    <div class="menu">
+      <van-grid :column-num="3" icon-size="50" :border="border" :clickable="!border">
+        <van-grid-item
+          v-for="item in MenuList"
+          :key="item.id"
+          :icon="item.img"
+          :to="item.to"
+          :text="item.name"
+        />
+      </van-grid>
+    </div>
+    <div class="pad_container">
+      <!-- 零售区 -->
+      <TypeTitle :icon="typeTitle[0].icon" :title="typeTitle[0].title" />
+      <ShopCard
+        v-for="item in saleGoods"
+        :key="item.id"
+        :title="item.title"
+        :img="item.img"
+        :price="item.price"
+        :bgImg="item.bgImg"
+        :btnName="item.btnName"
+        :tag="item.tag"
+        :tagP="item.tagP"
+        @choose="handleBuy(item.id)"
+      />
+      <!-- 代理区 -->
+      <TypeTitle :icon="typeTitle[1].icon" :time="typeTitle[1].time" :title="typeTitle[1].title" />
+      <ShopCard
+        v-for="item in saleGoods"
+        :key="item.id+2"
+        :title="item.title"
+        :img="item.img"
+        :price="item.price"
+        :bgImg="item.bgImg"
+        :btnName="item.btnName"
+        :tag="item.tag"
+        :tagP="item.tagP"
+        @choose="handleBuy(item.id)"
+      />
+
+      <!-- 会员尊享 -->
+      <TypeTitle :icon="typeTitle[2].icon" :time="typeTitle[2].time" :title="typeTitle[2].title" />
+      <div class="member_goods">
+        <ShopCardCol
+          v-for="item in memberGoods"
+          :key="item.id"
+          :title="item.title"
+          :price="item.price"
+          :btnName="item.btnName"
+          :img="item.img"
+        >
+
+        </ShopCardCol>
+      </div>
+      <!-- 个性化定制 -->
+      <TypeTitle :icon="typeTitle[3].icon" :time="typeTitle[3].time" :title="typeTitle[3].title" />
+    <div class="member_goods">
+           <ShopCardCol
+          v-for="item in memberGoods"
+          :key="item.id+5"
+          :title="item.title"
+          :price="item.price"
+          :btnName="item.btnName"
+          :img="item.img"
+        >
+          <div slot="footer">
+            <div class="price_box" @click="handleCheck(item.id)">
+              <p class="price">￥{{item.price}}</p>
+              <img src="../assets/icons/home/r-contact.png" alt />
+            </div>
+          </div>
+        </ShopCardCol>
+      </div>  
+    
+    </div>
+  </div>
+</template>
+
+<script>
+// @ is an alias to /src
+
+import TypeTitle from '@/components/TypeTitle.vue'
+import ShopCard from '@/components/ShopCard.vue'
+import ShopCardCol from '@/components/ShopCardCol.vue'
+export default {
+  components: { TypeTitle, ShopCard, ShopCardCol },
+  data() {
+    return {
+      border: false,
+      typeTitle: [
+        {
+          title: '零售区',
+          icon: require('$a/icons/home/r-sale.png')
+        },
+        {
+          title: '代理区',
+          time: 1000000,
+          icon: require('$a/icons/home/r-proxy.png')
+        },
+        {
+          title: '会员尊享',
+          icon: require('$a/icons/home/r-member.png')
+        },
+        {
+          title: '个性化定制',
+          icon: require('$a/icons/home/r-special.png')
+        }
+      ],
+      time: 30 * 60 * 60 * 1000,
+      MenuList: [
+        {
+          name: '会员权益',
+          id: 0,
+          to: '',
+          img: require('$a/icons/home/member.png')
+        },
+        {
+          name: '线上代理商',
+          id: 1,
+          to: '',
+          img: require('$a/icons/home/proxy.png')
+        },
+        {
+          name: '线下代理商',
+          id: 2,
+          to: '',
+          img: require('$a/icons/home/proxy2.png')
+        },
+        {
+          name: '企业介绍',
+          id: 3,
+          to: '',
+          img: require('$a/icons/home/introduce.png')
+        },
+        {
+          name: '产品介绍',
+          id: 4,
+          to: '',
+          img: require('$a/icons/home/about.png')
+        },
+        {
+          name: '联系客服',
+          id: 5,
+          to: '',
+          img: require('$a/icons/home/contact.png')
+        }
+      ],
+      text: '了解更多权益与升级规则 >>',
+      images: [
+        'https://img.yzcdn.cn/vant/apple-1.jpg',
+        'https://img.yzcdn.cn/vant/apple-2.jpg'
+      ],
+      saleGoods: [
+        {
+          id: 0,
+          title: '茅台迎宾53度茅台迎宾酒500ml 礼盒装酒厂直供',
+          img:
+            'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=3730743024,3724797634&fm=26&gp=0.jpg',
+          tag: '送',
+          tagP: '3张代理权',
+          price: '2',
+          bgImg: require('$a/icons/home/g_buy.png'),
+          btnName: '去抢购'
+        },
+        {
+          id: 1,
+          title: '茅台迎宾53度茅台迎宾酒500ml 礼盒装酒厂直供',
+          img:
+            'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=3730743024,3724797634&fm=26&gp=0.jpg',
+          tag: '送',
+          tagP: '3张代理权',
+          price: '2',
+          bgImg: require('$a/icons/home/buy.png'),
+          btnName: '去抢购'
+        }
+      ],
+      memberGoods: [
+        {
+          id: 0,
+          title: 'cesasdfasdd爱的色放吉安山东法撒旦法士大夫hi',
+          price: '1231231',
+          btnName: '去抢购',
+          img:
+            'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=3730743024,3724797634&fm=26&gp=0.jpg'
+        },
+        {
+          id: 1,
+          title: 'cesasdfasdd爱的色放吉安山东法撒旦法士大夫hi',
+          price: '1231231',
+          btnName: '去抢购',
+          img:
+            'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=3730743024,3724797634&fm=26&gp=0.jpg'
+        },
+        {
+          id: 2,
+          title: 'cesasdfasdd爱的色放吉安山东法撒旦法士大夫hi',
+          price: '1231231',
+          btnName: '去抢购',
+          img:
+            'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=3730743024,3724797634&fm=26&gp=0.jpg'
+        },
+        {
+          id: 3,
+          title: 'cesasdfasdd爱的色放吉安山东法撒旦法士大夫hi',
+          price: '1231231',
+          btnName: '去抢购',
+          img:
+            'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=3730743024,3724797634&fm=26&gp=0.jpg'
+        }
+      ]
+    }
+  },
+  methods: {
+    jumpNoticePage() {
+      console.log(1)
+    },
+    handleBuy(e) {
+      console.log(e)
+    },
+    handleCheck(e){
+      console.log(e)
+    }
+  }
+}
+</script>
+
+<style lang="postcss" scoped>
+.van-swipe {
+  background: #fff;
+}
+.img {
+  width: 10rem;
+  height: 6rem;
+}
+.menu {
+  box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
+}
+.member_goods {
+  white-space: nowrap;
+  word-break: break-all;
+  overflow-x: auto;
+}
+.price_box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.price_box p {
+  font-size: 16px;
+}
+.price_box img {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+</style>

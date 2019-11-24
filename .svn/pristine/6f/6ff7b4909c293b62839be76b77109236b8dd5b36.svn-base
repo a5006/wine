@@ -1,0 +1,65 @@
+<template>
+  <div>
+    <Gheader title="帮助" back="1" />
+    <!-- 列表 -->
+    <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+      <van-cell v-for="(item,idx) in list" :key="item.id" @load="onLoad">
+        <div class="item" @click="handleJumpTo(item)">
+          <div class="item_title">
+            <p class="item_title_red">0{{idx+1}}</p>
+            <span>{{item.content}}</span>
+          </div>
+          <van-icon name="arrow"  />
+        </div>
+      </van-cell>
+    </van-list>
+  </div>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      loading: false,
+      finished: true,
+      list: [{ id: 0, content: '企业介绍', link: '/news' }]
+    }
+  },
+  methods: {
+    onLoad() {},
+    handleJumpTo(item){
+      console.log(item)
+      this.$router.push({
+        path:item.link
+      })
+    }
+  }
+}
+</script>
+<style lang="postcss" scoped>
+.item {
+  height: .8rem;
+  line-height: .8rem;
+  background: rgba(255, 255, 255, 1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  font-size: 0.3733rem;
+}
+.item_title {
+  display: flex;
+  align-items: center;
+}
+.item_title>span{
+    margin-left: 20px;
+}
+.item_title_red {
+  color: #e70002;
+}
+.van-cell{
+  border:1px solid rgba(244,244,244,1);
+}
+.van-toast__text{
+  color: #fff!important;
+}
+</style>

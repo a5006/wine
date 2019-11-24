@@ -1,0 +1,199 @@
+<template>
+  <div class="order_container">
+    <Gheader title="确认订单" back="1" />
+    <!-- 购买方思 -->
+    <div class="way">
+      <p>请选择购买形式</p>
+      <van-radio-group
+        class="way_checkbox"
+        v-model="orderWay"
+        shape="square"
+        checked-color="#FA3652"
+      >
+        <van-radio v-for="item in radioList" :key="item.id" :name="item.name">
+          {{item.label}}
+          <img
+            slot="icon"
+            slot-scope="props"
+            class="icon"
+            :src="props.checked ? activeIcon : inactiveIcon"
+          />
+        </van-radio>
+      </van-radio-group>
+    </div>
+    <div class="pad_container">
+      <!-- 地址 -->
+      <OrderAddress :address="address" />
+      <!-- 购物车 -->
+      <div class="card">
+        <!-- 商品图 -->
+        <GoodsCard  :num="num" :price="price" :desc="desc" :title="title" :thumb="thumb" />
+        <!-- 购买数量 -->
+        <div class="step">
+          <p>购买数量</p>
+          <van-stepper v-model="step_num" button-size="22px" />
+        </div>
+        <div class="ticket">
+          <p>需要代理资格券</p>
+          <p class="ticket_num">{{ticket_num}}张</p>
+        </div>
+      </div>
+      <!-- 钱包抵扣 -->
+
+      <div class="pocket flex_bet">
+        <div class="flex">
+          <van-checkbox v-model="pocket_check" shape="square" checked-color="#E70002">钱包余额</van-checkbox>
+          <p class="money">(余额{{money}})</p>
+        </div>
+        <p class="ticket_num">可抵扣</p>
+      </div>
+      <!-- 付款 -->
+      <div class="footer">
+        <p>共 {{all_num}} 件，合计 <b>￥{{all_price}}</b></p>
+        <van-button type="default" :loading="btn_loading" loading-text="提交中..">付款</van-button>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import OrderAddress from '../components/OrderAddress.vue'
+import GoodsCard from '../components/GoodsCard.vue'
+export default {
+  components: {
+    OrderAddress,
+    GoodsCard
+  },
+  data() {
+    return {
+      btn_loading:false,
+      all_num:1,
+      all_price:10000,
+      pocket_check: false,
+      ticket_num: 6,
+      step_num: 1,
+      money: '123',
+      title: '茅台迎宾53度茅台迎宾酒500ml礼盒装酒厂直供',
+      desc: '度数：42°',
+      price: '10000',
+      num: 1,
+      thumb: 'https://img.yzcdn.cn/vant/t-thirt.jpg',
+      activeIcon: require('../assets/icons/other/radio_c.png'),
+      inactiveIcon: require('../assets/icons/other/radio.png'),
+      address: {
+        name: '张三',
+        phone: '123123123',
+        addr: '广东省深圳市西丽区桃园街道某某某某社区某某某小区'
+      },
+      radioList: [
+        {
+          id: 0,
+          name: '1',
+          label: '测试1'
+        },
+        {
+          id: 1,
+          name: '2',
+          label: '测试2'
+        }
+      ],
+      orderWay: '1'
+    }
+  }
+}
+</script>
+<style scoped>
+.order_container {
+  font-size: 0.4rem;
+}
+.way {
+  background: #fff;
+  padding: 0.3rem 1rem;
+  box-sizing: border-box;
+}
+.way p {
+  color: #666;
+}
+.way_checkbox {
+  display: flex;
+
+  align-items: center;
+  margin: 0.3rem 0;
+}
+.way_checkbox .van-radio {
+  margin-right: 0.5rem;
+}
+.icon {
+  width: 0.5rem;
+}
+.card {
+  box-shadow: 0px 0.0267rem 0.08rem 0px rgba(0, 0, 0, 0.15);
+  border-radius: 0.2rem;
+  overflow: hidden;
+  background: #fff;
+  margin: 0.2rem 0;
+}
+
+.step {
+  margin: 0 auto;
+  margin-top: 0.2rem;
+  padding: 0.5rem 0;
+  width: 8.8rem;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #e3e3e3;
+}
+.ticket {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 8.8rem;
+  margin: 0 auto;
+  margin-bottom: 0.3rem;
+    font-size: 0.3733rem;
+}
+.ticket_num {
+  color: #d2d2d2;
+  max-width: 3.4rem;
+}
+.pocket {
+  background: #fff;
+  padding: 0.5rem 0.3rem;
+  box-shadow: 0px 0.0267rem 0.08rem 0px rgba(0, 0, 0, 0.15);
+  border-radius: 0.2rem;
+}
+.money {
+  margin-left: 0.2rem;
+  font-size: 0.3467rem;
+}
+.footer{
+  background: #fff;
+position: fixed;
+left:0;right: 0;
+bottom:0;
+width: 10rem;
+margin: auto;
+display: flex;
+height: 1.6rem;
+align-items: center;
+justify-content: space-around;
+box-shadow:0px 2px 6px 0px rgba(0, 0, 0, 0.15);
+}
+b{
+font-size:0.5333rem;
+color: #E70002;
+}
+.van-button--default{
+  color: #fff;
+  background-image: url('../assets/icons/home/buy.png');
+  background-repeat: no-repeat;
+background-size: 100%;
+background-position: center;
+background-color: transparent;
+border:none;width: 3.5rem;
+padding-left: .1rem;
+}
+.van-button__text{
+  color: #fff;
+}
+</style>

@@ -1,0 +1,246 @@
+<template>
+  <div>
+    <Gheader :title="headerTitle" back="1" />
+    <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+      <div class="pad_container">
+        <div class="flex dateCount" v-if="time">
+          <p>距离结束还有</p>
+          <van-count-down class="time" :time="time">
+            <template v-slot="timeData">
+              <span class="item">{{ timeData.hours }}</span>:
+              <span class="item">{{ timeData.minutes }}</span>:
+              <span class="item">{{ timeData.seconds }}</span>
+            </template>
+          </van-count-down>
+        </div>
+
+        <van-list v-model="loading" :finished="finished" finished-text="- 已经到底啦 -" @load="onLoad">
+          <van-cell v-for="(item) in goodsList" :key="item.id" style="padding:0;">
+            <ShopCard
+              :key="item.id"
+              :title="item.title"
+              :img="item.img"
+              :price="item.price"
+              :bgImg="item.bgImg"
+              :btnName="item.btnName"
+              :tag="tag"
+              :tagP="item.tagP"
+              @choose="handleChoose(item.id)"
+              @buy="handleChoose(item.id)"
+            />
+          </van-cell>
+        </van-list>
+      </div>
+    </van-pull-refresh>
+  </div>
+</template>
+<script>
+import ShopCard from '../components/ShopCard.vue'
+export default {
+  components: {
+    ShopCard
+  },
+  data() {
+    return {
+      start: 0,
+      time: 0,
+      isLoading: false,
+      loading: false,
+      finished: false,
+      type: '',
+      listLen: '',
+      goodsList: []
+      // goodsList: [
+      //   {
+      //     id: 0,
+      //     title: '茅台迎宾53度茅台迎宾酒500ml 礼盒装酒厂直供',
+      //     img:
+      //       'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=3730743024,3724797634&fm=26&gp=0.jpg',
+      //     tag: '需',
+      //     tagFullColor: true,
+      //     tagP: '3张代理权',
+      //     price: '2',
+      //     originPrice: 123,
+      //     bgImg: require('$a/icons/home/g_buy.png'),
+      //     btnName: '去抢购'
+      //   },
+      //   {
+      //     id: 1,
+
+      //     title: '茅台迎宾53度茅台迎宾酒500ml 礼盒装酒厂直供',
+      //     img:
+      //       'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=3730743024,3724797634&fm=26&gp=0.jpg',
+      //     tag: '送',
+      //     tagP: '3张代理权',
+      //     price: '2',
+      //     bgImg: require('$a/icons/home/buy.png'),
+      //     btnName: '去抢购'
+      //   }
+      // ]
+    }
+  },
+  methods: {
+    handleChoose(id) {
+      let {type,lsq_period_id,dlq_period_id} = this.$route.query
+      this.$router.push({
+        path:'/goodsDetail',
+        query:{
+          type,
+          goods_id:id,
+          period_id:lsq_period_id||dlq_period_id
+        }
+      })
+    },
+
+    onLoad() {
+      this.queryInfo()
+      this.start += 10
+      this.loading = false
+    },
+    handleJumpTo(item) {
+      this.$router.push({
+        path: item.link
+      })
+    },
+    onRefresh() {
+      setTimeout(() => {
+        this.$toast('刷新成功')
+        this.isLoading = false
+      }, 500)
+    },
+    queryInfo() {
+      const obj = {
+        retail: () => {
+          let { lsq_period_id } = this.$route.query
+          this.$store.dispatch('getRetailList', {
+            start: this.start,
+            limit: '10',
+            period_id: lsq_period_id
+          })
+        },
+        agent: () => {
+          let { dlq_period_id } = this.$route.query
+          this.$store.dispatch('getAgentList', {
+            start: this.start,
+            limit: '10',
+            period_id: dlq_period_id
+          })
+        },
+        special:()=>{
+          this.$store.dispatch('getSpecialList', {
+            start: this.start,
+            limit: '10',
+          })
+        },
+               member:()=>{
+          this.$store.dispatch('getMemberGoodsList', {
+            start: this.start,
+            limit: '10',
+          })
+        },
+      }
+      obj[this.type]()
+    },
+  },
+  computed: {
+    headerTitle(){
+  switch (this.type) {
+        case 'agent':
+          return '代理区列表'
+        case 'retail':
+          return '零售区列表'
+          case 'member':
+            return '会员区列表'
+            case 'special':
+              return '个性定制区列表'
+        default:
+          return '列表'
+      }
+    },
+    // 监听对象
+    tag() {
+      switch (this.type) {
+        case 'agent':
+          return '需'
+        case 'retail':
+          return '送'
+        default:
+          return '送'
+      }
+    },
+    dataObj() {
+      let type = this.type
+      var store = {
+        retail: this.$store.state.retailGoodsList,
+        agent: this.$store.state.agentGoodsList,
+        special:this.$store.state.specialGoodsList,
+        member:this.$store.state.memberGoodsList
+      }
+      let obj = {}
+      if (store[type]) {
+        obj = store[type]
+
+        if (Object.keys(obj).length) {
+          let list = obj.list.map(item => {
+            item.img = this.formatImg(item.cover)
+            item.bgImg = require('$a/icons/home/buy.png')
+            item.btnName = '去抢购'
+            item.tagP = `${item.dlq_add_nums || item.dlq_need_nums}张代理权`
+            item.title = item.goods_name
+            item.price = item.price*1/100
+            return item
+          })
+          return { list, len: obj.nums }
+        }
+      }
+
+      return null
+    }
+  },
+  watch: {
+    //对数组监听
+    dataObj(e) {
+      if (!e) return
+      let { list, len } = e
+      this.goodsList = [...this.goodsList, ...list]
+      this.listLen = len * 1
+// 停止加载
+      if (this.goodsList.length >= this.listLen) {
+        this.finished = true
+      }
+    }
+  },
+  mounted() {
+    let { type, time } = this.$route.query
+    this.time = time * 1
+    this.type = type
+    this.onLoad()
+  }
+}
+</script>
+<style scoped>
+.time {
+  margin-left: 0.2rem;
+}
+.item {
+  display: inline-block;
+  width: 0.5rem;
+  margin-right: 5px;
+  color: #fff;
+  font-size: 0.16rem;
+  text-align: center;
+  background-color: #e70002;
+}
+.dateCount {
+  font-size: 0.4rem;
+  justify-content: center;
+  margin: 0.2rem 0;
+}
+.van-cell {
+  background: transparent;
+  padding: 0;
+}
+.relative {
+  margin: 0.1rem 0;
+}
+</style>

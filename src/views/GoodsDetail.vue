@@ -1,0 +1,399 @@
+<template>
+  <div class="white_container">
+    <Gheader title="商品详情" back="1" />
+    <!-- 通知栏 -->
+    <van-notice-bar :text="text" left-icon="volume-o" />
+    <!-- 轮播 -->
+    <van-swipe :autoplay="3000" indicator-color="#E70002">
+      <van-swipe-item v-for="(item, index) in banner" :key="index" @click="handleClickSwiper(item)">
+        <img class="img" v-lazy="item.img" />
+      </van-swipe-item>
+    </van-swipe>
+
+    <div class="pad_container goods_title">
+      <!-- 价格 -->
+      <div class="price_box">
+        <div class="price">
+          <p class="price_title">￥{{price}}</p>
+          <!-- <small>（代理价）</small> -->
+          <!-- <p class="proxy_price">￥500</p> -->
+        </div>
+        <!-- <div class="countDown">
+          <p>距离结束还有</p>
+          <van-count-down class="time" :time="time">
+            <template v-slot="timeData">
+              <span class="countDown_item">{{ timeData.hours }}</span>:
+              <span class="countDown_item">{{ timeData.minutes }}</span>:
+              <span class="countDown_item">{{ timeData.seconds }}</span>
+            </template>
+          </van-count-down>
+        </div>-->
+      </div>
+      <!-- 赠送 -->
+      <div class="sub_desc flex">
+        <img src="../assets/icons/other/pen.png" alt />
+        <p>赠送{{ticket}}张代理券</p>
+      </div>
+      <p class="title">{{goodsName}}</p>
+      <div class="document flex" v-if="doc">
+        <van-checkbox v-model="checked" checked-color="#e70002"></van-checkbox>
+        <p @click="jumpToDocumentPage">我已阅读并同意《{{doc}}》</p>
+      </div>
+    </div>
+    <!-- 产品详情页 -->
+    <div class="goods_desc">
+      <p class="goods_desc_title">商品详情</p>
+      <RichText :content="content" />
+    </div>
+    <button class="buy" @click="handleShowOrder">{{btnName}}</button>
+
+    <!-- 购物弹窗 -->
+    <SkuModal :show="skuModalShow" :skuData="skuData" @handleCls="handleCls" />
+    <!-- 补充完成个人信息 -->
+    <van-dialog v-model="userInfoModal" title="补全信息" show-cancel-button :beforeClose="beforeClose">
+      <UserInfoInput v-model="value" :errCodeMsg="errCodeMsg" @sendCode="handleSendCode" />
+    </van-dialog>
+  </div>
+</template>
+<script>
+import UserInfoInput from '../components/UserInfoInput.vue'
+import SkuModal from '../components/SkuModal.vue'
+import RichText from '../components/RichText'
+export default {
+  components: {
+    RichText,
+    SkuModal,
+    UserInfoInput
+  },
+  data() {
+    return {
+      goodsId: 123,
+      ticket: '',
+      goodsName: '',
+      type: '',
+      errCodeMsg: '',
+      value: {
+        name: '',
+        phone: '',
+        code: ''
+      },
+      skuModalShow: false,
+      skuData: [],
+      userInfoModal: false,
+
+      checked: false,
+      text: '产品直推人和购买人可各获得X张代理资格券',
+      price: 12,
+      time: 10000000,
+      banner: [],
+      content: ''
+    }
+  },
+  methods: {
+    handleCls(f) {
+      console.log(f)
+      this.skuModalShow = f
+    },
+    beforeClose(a, d) {
+      let { err, ...mainData } = this.value
+      console.log(a)
+      if (a === 'cancel') {
+        d()
+      } else if (a === 'confirm') {
+        // 是否为空
+
+        if (
+          err ||
+          !mainData.name.length ||
+          !mainData.code.length ||
+          !mainData.phone.length
+        ) {
+          this.$notify({
+            type: 'danger',
+            message: '信息填写错误'
+          })
+          this.errCodeMsg = '验证码错误'
+          d(false)
+        } else {
+          let { name, phone, code } = mainData
+          this.$store.dispatch('registerUser', {
+            name,
+            phone,
+            code
+          })
+          // this.$notify({ type: 'success', message: '通知内容' })
+          // d()
+        }
+      }
+    },
+    jumpToDocumentPage() {
+      this.$router.push({
+        path: '/news',
+        query: {
+          type: this.type
+        }
+      })
+    },
+    // 发送验证码
+    handleSendCode() {
+      let { phone } = this.value
+      if (!phone) {
+        this.$toast('请输入手机号')
+        return
+      }
+      this.$store.dispatch('sendCode', {
+        phone
+      })
+    },
+    handleClickSwiper() {},
+    handleShowOrder() {
+      if (this.checked && this.doc) {
+        if (this.regInfo.isreg) {
+          this.skuModalShow = true
+
+          // 立即抢购
+          return
+        }
+        // 代理区，零售区，会员区如果注册
+        this.userInfoModal = true
+        // this.skuModalShow = true
+      } else if (this.type === 'special') {
+        // 如果个性化定制，用户已经注册
+        if (this.regInfo.isreg) {
+          this.$dialog
+            .alert({
+              title: '客服电话',
+              message: this.regInfo.service_phone
+            })
+            .then(() => {
+              // on close
+            })
+        }
+      }else if(this.type ==='member'){
+           if (this.regInfo.isreg) {
+          this.skuModalShow = true
+
+          // 立即抢购
+          return
+        }
+            this.userInfoModal = true
+      } else {
+        this.$dialog
+          .alert({
+            message: '请勾选已阅读并同意协议'
+          })
+          .then(() => {
+            // on close
+          })
+      }
+    },
+    getReg() {
+      this.$store.dispatch('getReg')
+    },
+    handleConfirmUserInfo() {
+      // console.log('1')
+      console.log(this.value)
+    },
+    queryInfo() {
+      let { goods_id, period_id } = this.$route.query
+      const obj = {
+        retail: () => {
+          this.$store.dispatch('getRetailDetail', {
+            goods_id,
+            period_id
+          })
+        },
+        agent: () => {
+          this.$store.dispatch('getAgentDetail', {
+            goods_id,
+            period_id
+          })
+        },
+        special: () => {
+          this.$store.dispatch('getSpecialDetail', {
+            goods_id
+          })
+        },
+        member: () => {
+          this.$store.dispatch('getMemberDetail', {
+            goods_id
+          })
+        }
+      }
+
+      obj[this.type]()
+    }
+  },
+  computed: {
+    regInfo() {
+      return this.$store.state.regInfo
+    },
+    doc() {
+      let { type } = this.$route.query
+      switch (type) {
+        case 'retail':
+          return '零售协议'
+        case 'agent':
+          return '代理协议'
+        default:
+          return ''
+      }
+    },
+    dataObj() {
+      return this.$store.state.goodsDetail
+    },
+    btnName() {
+      return this.type !== 'special' ? '立即抢购' : '联系客服'
+    },
+    registerUser() {
+      return this.$store.state.registerUser
+    }
+  },
+  watch: {
+    registerUser(d) {
+      // 如果注册成功
+      if (d.data) {
+        this.getReg()
+        this.skuModalShow = true
+      }
+      this.userInfoModal = false
+    },
+    regInfo(d) {},
+    dataObj(data) {
+      console.log(data)
+      this.goodsName = data.goods_name
+      this.price = data.price
+      this.ticket = data.dlq_add_nums
+      this.content = this.formatContent(data.goods_desc)
+      this.skuData = data
+      console.log(this.skuData)
+      this.banner = data.goods_attr['1021'].children.map(item => {
+        item.img = this.formatImg(item.cover)
+        return item
+      })
+    }
+  },
+  mounted() {
+    this.type = this.$route.query.type
+    this.queryInfo()
+    this.getReg()
+  }
+}
+</script>
+<style scoped>
+.price_box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(207, 207, 207, 1);
+  padding-bottom: 0.2rem;
+}
+.price {
+  font-size: 0.4rem;
+  display: flex;
+  align-items: center;
+}
+.proxy_price {
+  font-size: 0.48rem;
+  text-decoration: line-through;
+}
+.price_title {
+  font-size: 0.7333rem;
+
+  font-weight: bold;
+  color: rgba(231, 0, 2, 1);
+}
+.price small {
+  color: rgba(231, 0, 2, 1);
+}
+.time {
+  margin-left: 0.2rem;
+}
+.countDown_item {
+  display: inline-block;
+  width: 22px;
+  margin-right: 5px;
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
+  background-color: #e70002;
+}
+.img {
+  width: 10rem;
+  height: 6rem;
+}
+.countDown {
+  font-size: 0.3467rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sub_desc > img {
+  width: 0.6267rem;
+  height: 0.56rem;
+  margin-right: 0.2667rem;
+}
+.sub_desc {
+  font-size: 0.44rem;
+  margin: 0.2rem 0;
+}
+.title {
+  font-size: 0.45rem;
+  font-weight: bold;
+  color: rgba(51, 51, 51, 1);
+  line-height: 0.6667rem;
+  margin: 0.2rem 0;
+}
+.document {
+}
+.document p {
+  text-decoration: underline;
+  margin-left: 0.2rem;
+  font-size: 0.2933rem;
+}
+.goods_title {
+  box-shadow: 0px 0.0267rem 0.08rem 0px rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid rgba(207, 207, 207, 1);
+}
+
+.goods_desc {
+  border-top: 0.5rem solid #f5f5f5;
+}
+.goods_desc_title {
+  color: #999;
+  display: block;
+  height: 0.4267rem;
+  text-align: center;
+  line-height: 0.4267rem;
+  font-size: 0.4267rem;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+.buy {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 1rem;
+  margin: auto;
+  width: 5.0133rem;
+  height: 1.3867rem;
+  color: #fff;
+  background-image: url('../assets/icons/home/buy.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  background-color: transparent;
+  border: none;
+  box-sizing: border-box;
+  padding-right: 0.4rem;
+  font-size: 0.36rem;
+}
+.buy:disabled {
+  background-image: url('../assets/icons/home/g_buy.png');
+}
+.sku_btn {
+  position: relative;
+  display: block;
+  margin: 0 auto;
+}
+</style>

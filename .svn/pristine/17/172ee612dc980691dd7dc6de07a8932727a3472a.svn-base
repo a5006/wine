@@ -1,0 +1,163 @@
+<template>
+  <div>
+    <Gheader title="我的团队" back="1" />
+    <div class="pad_container">
+      <!-- 团队头部 -->
+      <div class="top">
+        <div class="header_title flex_bet sub_con">
+          <div class="header_item" v-for="item in teamList" :key="item.id">
+            <p class="item_title">{{item.val}}</p>
+            <p class="small">{{item.name}}</p>
+          </div>
+        </div>
+        <router-link to tag="div" class="more flex">
+          <p>查看团队业绩</p>
+          <van-icon name="arrow" color="#E70002" />
+        </router-link>
+      </div>
+      <!-- 类型 -->
+      <div class="top">
+
+    <van-tabs v-model="active" sticky>
+      <van-tab class="con" :title="item.title" v-for="item in menuList" :key="item.title">
+        <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+          <van-cell v-for="item in list" :key="item">
+            <TeamCard :img="img" name="adsf" phone="123123312" level="adsfs"/>
+
+          </van-cell>
+        </van-list>
+      </van-tab>
+    </van-tabs>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import TeamCard from '../components/TeamCard'
+export default {
+  components: {
+    TeamCard
+  },
+  data() {
+    return {
+      img:`https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3269503817,396596092&fm=26&gp=0.jpg`,
+
+      teamList: [
+        {
+          id: 0,
+          name: '一级',
+          val: '123'
+        },
+        {
+          id: 1,
+          name: '二级',
+          val: '123'
+        },
+        {
+          id: 2,
+          name: '三级',
+          val: '123'
+        },
+        {
+          id: 3,
+          name: '四级',
+          val: '123'
+        }
+      ],
+          list: [],
+      menuList: [
+        { title: '一级' },
+        { title: '二级' },
+        { title: '三级' },
+               { title: '四级' }
+      ],
+      active: 2,
+      loading: false,
+      finished: false
+    
+    }
+  },
+  methods:{
+        onLoad() {
+      // 异步更新数据
+      setTimeout(() => {
+        for (let i = 0; i < 10; i++) {
+          this.list.push(this.list.length + 1)
+        }
+        // 加载状态结束
+        this.loading = false
+
+        // 数据全部加载完成
+        if (this.list.length >= 40) {
+          this.finished = true
+        }
+      }, 500)
+    }
+  }
+}
+</script>
+<style scoped>
+.top {
+  background: #fff;
+  box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
+  border-radius: 0.2rem;
+  padding: 0.3rem 0.6rem;
+}
+.header_title {
+  box-sizing: border-box;
+  font-size: 0.4rem;
+}
+.small_con {
+  padding: 0.3rem;
+  margin: 0 auto;
+  background: #fff;
+  box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
+}
+.order_title {
+  padding: 0 0.7rem;
+}
+
+.header_con {
+  flex: 2;
+  margin: 0 0.3rem;
+}
+.header_con_titile {
+  font-size: 0.5rem;
+}
+.header_con_phon,
+.header_level,
+.small {
+  color: rgba(22, 22, 22, 0.699);
+}
+.small {
+  font-size: 0.2667rem;
+}
+
+.header_item {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  height: 1rem;
+  margin: 0.4rem 0;
+}
+p.item_title {
+  color: #333;
+}
+.more {
+  font-size: 0.4rem;
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+}
+.more p {
+  color: #e70002;
+}
+.top:nth-child(2){
+  margin-top: .2rem;
+}
+.van-cell{
+ padding: 0;
+ padding: .4rem 0;
+}
+</style>

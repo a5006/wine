@@ -1,0 +1,10 @@
+<!DOCTYPE html><html lang=en><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><link rel=icon href=/favicon.ico><link rel=stylesheet href=./index.css><title>app</title><link href=/assets/css/chunk-04f5336a.css rel=prefetch><link href=/assets/css/chunk-28117679.css rel=prefetch><link href=/assets/css/chunk-3d9a8a92.css rel=prefetch><link href=/assets/js/chunk-04f5336a.js rel=prefetch><link href=/assets/js/chunk-28117679.js rel=prefetch><link href=/assets/js/chunk-3d9a8a92.js rel=prefetch><link href=/assets/css/app.css rel=preload as=style><link href=/assets/css/chunk-vendors.css rel=preload as=style><link href=/assets/js/app.js rel=preload as=script><link href=/assets/js/chunk-vendors.js rel=preload as=script><link href=/assets/css/chunk-vendors.css rel=stylesheet><link href=/assets/css/app.css rel=stylesheet></head><body><noscript><strong>We're sorry but app doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><style>#loading_app{
+    font-size: 30px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #666;
+    position: absolute;
+    top:0;bottom:0;left:0;right:0;margin: auto;
+  }</style><div id=app><div id=loading_app>loading....</div></div><script src=/assets/js/chunk-vendors.js></script><script src=/assets/js/app.js></script></body></html>

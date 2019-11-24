@@ -1,0 +1,73 @@
+<template>
+  <div class="content flex_bet">
+    <div class="head flex">
+      <p class="num">-￥{{price}}</p>
+      <p :class="'default '+[check]">{{name}}</p>
+    </div>
+    <div class="money">
+      <p class="time">{{time}}</p>
+      <p class="grade">积分余额{{grade}}</p>
+    </div>
+  </div>
+</template>
+<script>
+export default {
+  props: {
+    price: {},
+    check: {},
+    time: {},
+    grade: {}
+  },
+  computed: {
+    name() {
+      switch (this.check) {
+        case 'check':
+          return '审核中'
+        case 'through':
+          return '通过'
+        case 'noThrouth':
+          return '审核不通过'
+        default:
+          return '不通过'
+      }
+    }
+  }
+}
+</script>
+<style scoped>
+.default {
+  font-size: 0.32rem;
+  margin-left: .2rem;
+  height: .45rem;
+  line-height: .45rem;padding: 0 .2rem;
+}
+.check {
+  background: rgba(231, 0, 2, 1);
+  border-radius: 0.2267rem;
+  color: #fff;
+  padding: 0 0.2rem;
+}
+.noThrouth{
+
+  text-align: center;
+  color: #fff;
+  background:rgba(203,203,203,1);
+border-radius:0.2267rem;
+}
+.throuth{border-radius:0.2267rem;
+  color: #E70002;
+  border:1px solid #E70002;
+}
+.num,
+.grade {
+  color: #666;
+  font-size: 0.48rem;
+  margin: 0.1rem 0;
+}
+.time {
+  color: rgba(153, 153, 153, 1);
+}
+.money{
+  text-align: right;
+}
+</style>

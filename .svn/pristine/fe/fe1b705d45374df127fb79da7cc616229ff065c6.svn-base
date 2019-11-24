@@ -1,0 +1,33 @@
+<template>
+  <div id="app">
+    <van-loading v-show="loading" class="loading" />
+    <router-view />
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'home',
+  data() {
+    return {}
+  },
+  components: {},
+  computed: {
+    loading() {
+      return this.$store.state.loading
+    }
+  }
+}
+</script>
+
+<style>
+.loading {
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  right: 0;
+  margin: auto;
+  text-align: center;
+  top: 2rem;
+}
+</style>

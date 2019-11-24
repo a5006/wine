@@ -1,0 +1,112 @@
+<template>
+  <div class="list">
+    <Gheader title="个人信息" back="1" />
+    <div class="list_content">
+      <div class="item flex_bet auto">
+        <p class="title">头像</p>
+        <van-image
+          width="1.5rem"
+          height="1.5rem"
+          round
+          lazy-load
+          src="https://img.yzcdn.cn/vant/cat.jpeg"
+        />
+      </div>
+      <div
+        class="item flex_bet"
+        v-for="item in list"
+        :key="item.id"
+        @click="showEditModal(item.title)"
+      >
+        <p class="title">{{item.title}}</p>
+        <p class="gray">{{item.value}}</p>
+      </div>
+    </div>
+
+    <!-- 弹窗组件 -->
+    <van-dialog
+      v-model="editModal"
+      :title="type"
+      show-cancel-button
+      @confirm="handleConfirmUserInfo"
+      :beforeClose="beforeClose"
+    >
+      <van-cell-group>
+
+        <van-field v-model="userName" placeholder="请输入用户名" v-if="type==='真实姓名'"/>
+        <van-field v-model="petName" placeholder="请输入昵称" v-if="type==='昵称'"/>
+        <van-field v-model="phone" placeholder="请输入电话号码" v-if="type==='电话号码'"/>
+      </van-cell-group>
+    </van-dialog>
+  </div>
+</template>
+<script>
+export default {
+  components: {},
+  data() {
+    return {
+      editModal: false,
+      userName: '',
+      petName: '',
+      phone: '',
+      type:'',
+      list: [
+        { title: '昵称', value: 'silan' },
+        { title: '真实姓名', value: 'readlname' },
+        { title: '电话号码', value: '123213' }
+      ]
+    }
+  },
+  methods: {
+    showEditModal(e) {
+      console.log(e)
+      this.type = e
+      this.editModal = true
+    },
+    handleConfirmUserInfo() {
+      console.log('1')
+    },
+    beforeClose(a, d) {
+      console.log(a)
+      if (a === 'cancel') {
+        d()
+      } else if (a === 'confirm') {
+        d(false)
+      } else {
+        this.$notify({ type: 'success', message: '通知内容' })
+        d()
+      }
+    }
+  }
+}
+</script>
+<style scoped>
+.list_content {
+  background: #fff;
+  border-bottom: 1px solid rgba(210, 210, 210, 1);
+}
+.img {
+  width: 1rem;
+  height: 1rem;
+}
+.item {
+  /* height: 1.32rem; */
+  background: rgba(255, 255, 255, 1);
+  border-top: 1px solid rgba(210, 210, 210, 1);
+  font-size: 0.4rem;
+  padding: 0.3rem 0.4rem;
+}
+.gray {
+  color: #999;
+}
+.title {
+  color: #222;
+}
+.van-cell{
+  border:1px solid #d6d6d6;
+  border-radius: 0.0667rem;
+  margin-top: .2rem;
+  text-align: center;
+}
+
+</style>

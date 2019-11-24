@@ -1,0 +1,316 @@
+<template>
+  <div class="list">
+    <Gheader title="地址管理" back="1" />
+    <div class="list_content">
+      <!-- 收件人 -->
+      <div class="item flex_bet">
+        <p class="title">收件人</p>
+        <van-field v-model="name" placeholder="请输入收件人" :readonly="!isEdit" label-align="right" />
+      </div>
+      <!-- 电话 -->
+      <div class="item flex_bet">
+        <p class="title">电话</p>
+        <van-field v-model="mobile" placeholder="请输入电话" :readonly="!isEdit" label-align="right" />
+      </div>
+      <!-- 所在地区 -->
+      <div class="item flex" @click="handleShowModal">
+        <p class="title">所在地区</p>
+        <p class="gray">{{cityData}}</p>
+      </div>
+      <!-- 地区详情 -->
+      <div class="item flex_bet textarea">
+        <!-- <p class="title">收件人</p> -->
+        <van-field
+          v-model="address"
+          placeholder="请输入详细地址"
+          :readonly="!isEdit"
+          label-align="right"
+          type="textarea"
+        />
+      </div>
+      <!-- 是否默认地址 -->
+      <div class="item flex_bet">
+        <p class="title">是否默认地址</p>
+        <van-switch
+          :disabled="!isEdit"
+          v-model="defaultVal"
+          active-color="#e70002"
+          inactive-color="#fff"
+        />
+      </div>
+    </div>
+
+    <van-button
+      type="default"
+      @click="handleBtn"
+      :class="isEdit?'btn':'normalBtn'"
+    >{{isEdit?'保存':'编辑'}}</van-button>
+    <van-button v-if="id" type="default" class="normalBtn" @click="handleDel">删除</van-button>
+    <!-- 弹窗组件 -->
+
+    <van-popup v-model="showModal" position="bottom">
+      <van-area @cancel="closeModal" @confirm="chooseArea" :area-list="areaList" />
+    </van-popup>
+  </div>
+</template>
+<script>
+import cityList from '../utils/addr'
+export default {
+  components: {},
+  data() {
+    return {
+      areaList: cityList,
+      defaultVal: false,
+      showModal: false,
+      name: '',
+      mobile: '',
+      address: '',
+      province: '',
+      id:0,
+      city:"",
+      area: '',
+      cityData: '',
+      isEdit: false,
+      type: '',
+      modalVal: ''
+    }
+  },
+  methods: {
+    handleClean(){
+      this.name = ""
+this.mobile = ""
+this.address = ""
+this.province = ""
+this.area = ""
+this.city = ""
+this.cityData = ""
+this.modalVal = ""
+    },
+    // 关闭
+    closeModal() {
+      this.showModal = false
+    },
+    // 选择地区
+    chooseArea(arr) {
+      let nameArr = arr.map(item => item.name)
+      let province = (this.province = nameArr[0])
+      let area = (this.area = nameArr[1])
+      let city = (this.city = nameArr[2])
+      this.cityData = `${province}-${area}-${city}`
+
+      this.showModal = false
+    },
+    // 删除
+    handleDel() {
+      this.$dialog
+        .confirm({
+          title: '确定删除吗'
+        })
+        .then(() => {
+          // on confirm
+          this.delAddr()
+          this.handleClean()
+     
+        })
+        .catch(() => {
+          // on cancel
+        })
+    },
+
+    delAddr() {
+      let { id } = this.$route.query
+      this.$store.dispatch('delAddr',{id})
+    },
+    handleBtn() {
+      // 如果为编辑状态下
+
+      if (this.isEdit) {
+        console.log('保存')
+        let result = this.checkInput()
+        if (!result) {
+          this.$toast('请填写完整内容')
+          return
+        }
+        this.handleSave()
+      }
+      this.isEdit = !this.isEdit
+    },
+    handleSave() {
+      let { id } = this.$route.query
+      let type = id * 1 > 0 ? 'editAddr' : 'addAddr'
+
+      let { name, mobile, address, province, area, city, defaultVal } = this
+      this.$store.dispatch(type, {
+        id,
+        name,
+        mobile,
+        address,
+        province,
+        area,
+        city,
+        default: defaultVal ? 1 : 0
+      })
+    },
+
+    // addAddr() {
+    //     let { id } = this.$route.query
+    //   let { name, mobile, address, province, area, city, defaultVal } = this
+
+    //   this.$store.dispatch('editAddr', {
+    //     id,
+    //     name,
+    //     mobile,
+    //     address,
+    //     province,
+    //     area,
+    //     city,
+    //     default: defaultVal ? 1 : 0
+    //   })
+    // },
+    // 获取银行卡信息
+
+    getAddrInfo() {
+      let { id } = this.$route.query
+      this.$store.dispatch('getAddr', {
+        id
+      })
+    },
+    handleShowModal(e) {
+      if (!this.isEdit) return
+      this.showModal = true
+    },
+    handleConfirmUserInfo(d) {},
+    onChange(picker, value, index) {
+      this.modalVal = value
+    },
+    beforeClose(a, d) {
+      if (a === 'cancel') {
+        d()
+      } else if (a === 'confirm') {
+        this.mobile = this.modalVal
+        d()
+      }
+    },
+    //  查询地址信息
+    queryAddrInfo() {
+      let { id } = this.$route.query
+      id = id * 1
+      if (id >= 0) {
+        this.getAddrInfo()
+      }
+    },
+    // 校验输入
+    checkInput() {
+      let { name, mobile, address } = this
+      let obj = {
+        name,
+        mobile,
+        address
+      }
+
+      for (let k in obj) {
+        if (!obj[k]) {
+          console.log(k)
+          return false
+        }
+        return true
+      }
+    }
+  },
+  watch: {
+    cityArea(e) {
+      this.cityData = e
+    },
+    defaultVal(e) {
+      console.log(e)
+    },
+    addrInfo(d) {
+      console.log(d)
+      let { name, mobile, address, city, area, province } = d
+      this.mobile = mobile
+      this.name = name
+      this.address = address
+      this.defaultVal = Boolean(d.default * 1)
+      this.province = province
+      this.city = city
+      this.area = area
+      console.log(this.defaultVal)
+    }
+  },
+  computed: {
+    addrInfo() {
+      return this.$store.state.addrInfo
+    },
+    cityArea() {
+      let { province, area, city } = this
+      return `${province}-${area}-${city}`
+    }
+    // addrInfoListName() {
+    //   return (
+    //     this.addrInfoList.length && this.addrInfoList.map(item => item.mobile)
+    //   )
+    // }
+  },
+  mounted() {
+    // 获取单个银行卡信息
+    this.id = this.$route.query.id
+    this.queryAddrInfo()
+  }
+}
+</script>
+<style scoped>
+.list_content {
+  background: #fff;
+  border-bottom: 1px solid rgba(210, 210, 210, 1);
+}
+.img {
+  width: 1rem;
+  height: 1rem;
+}
+.item {
+  /* height: 1.32rem; */
+  background: rgba(255, 255, 255, 1);
+  border-top: 1px solid rgba(210, 210, 210, 1);
+  font-size: 0.4rem;
+  padding: 0 0.4rem;
+  height: 1.7rem;
+  line-height: 1.7rem;
+}
+.gray {
+  color: #999;
+}
+.title {
+  color: #222;
+  width: 4rem;
+}
+.van-cell {
+  border: 1px solid #d6d6d6;
+  border-radius: 0.0667rem;
+  margin-top: 0.2rem;
+  text-align: center;
+}
+.btn {
+  width: 9rem;
+  margin: 0.3rem auto;
+  display: block;
+  color: #fff;
+  background: #e70002;
+}
+.normalBtn {
+  width: 9rem;
+  margin: 0.3rem auto;
+  display: block;
+}
+.normalBtn .van-button__text {
+  color: #222;
+}
+.van-button__text {
+  color: #fff;
+}
+.van-cell {
+  border: none;
+}
+.textarea {
+  height: auto;
+}
+</style>

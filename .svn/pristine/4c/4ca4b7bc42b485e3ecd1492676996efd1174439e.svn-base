@@ -1,0 +1,132 @@
+<template>
+  <div>
+    <Gheader title="列表" back="1" />
+<van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+
+    <div class="pad_container">
+      <div class="flex dateCount" v-if="time">
+        <p>距离结束还有</p>
+        <van-count-down class="time" :time="time">
+          <template v-slot="timeData">
+            <span class="item">{{ timeData.hours }}</span>:
+            <span class="item">{{ timeData.minutes }}</span>:
+            <span class="item">{{ timeData.seconds }}</span>
+          </template>
+        </van-count-down>
+      </div>
+
+
+      <van-list v-model="loading" :finished="finished" finished-text="- 已经到底啦 -" @load="onLoad">
+        <van-cell v-for="(item,idx) in saleGoods" :key="item.id" @load="onLoad">
+          <ShopCard
+            :key="item.id+2"
+            :title="item.title"
+            :img="item.img"
+            :price="item.price"
+            :num="item.num"
+            :bgImg="item.bgImg"
+            :btnName="item.btnName"
+            :originPrice="item.originPrice"
+            :tagFullColor="item.tagFullColor"
+            :tag="item.tag"
+            :tagP="item.tagP"
+            @choose="handleBuy(item.id)"
+            @buy="handleBuy(item.id)"
+          />
+        </van-cell>
+      </van-list>
+      
+    </div>
+    </van-pull-refresh>
+  </div>
+</template>
+<script>
+import ShopCard from '../components/ShopCard.vue'
+export default {
+  components: {
+    ShopCard
+  },
+  data() {
+    return {
+      time: 1002200,   
+      isLoading: false,
+      loading: false,
+      finished: true,
+      saleGoods: [
+        {
+          id: 0,
+          title: '茅台迎宾53度茅台迎宾酒500ml 礼盒装酒厂直供',
+          img:
+            'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=3730743024,3724797634&fm=26&gp=0.jpg',
+          tag: '需',
+          tagFullColor: true,
+          tagP: '3张代理权',
+          price: '2',
+          originPrice: 123,
+          bgImg: require('$a/icons/home/g_buy.png'),
+          btnName: '去抢购'
+        },
+        {
+          id: 1,
+      
+          title: '茅台迎宾53度茅台迎宾酒500ml 礼盒装酒厂直供',
+          img:
+            'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=3730743024,3724797634&fm=26&gp=0.jpg',
+          tag: '送',
+          tagP: '3张代理权',
+          price: '2',
+          bgImg: require('$a/icons/home/buy.png'),
+          btnName: '去抢购'
+        }
+      ]
+    }
+  },
+  methods: {
+    handleBuy(){
+      console.log('buy')
+      this.$router.push('/goodsDetail')
+    },
+
+    onLoad() {},
+    handleJumpTo(item) {
+      console.log(item)
+      this.$router.push({
+        path: item.link
+      })
+    },
+        onRefresh() {
+      setTimeout(() => {
+        this.$toast('刷新成功');
+        this.isLoading = false;
+      }, 500);
+    }
+  }
+}
+</script>
+<style scoped>
+.time {
+  margin-left: 0.2rem;
+}
+.item {
+  display: inline-block;
+  width: 0.5rem;
+  margin-right: 5px;
+  color: #fff;
+  font-size: 0.16rem;
+  text-align: center;
+  background-color: #e70002;
+}
+.dateCount {
+  font-size: 0.4rem;
+  justify-content: center;
+  margin: 0.2rem 0;
+}
+.van-cell{
+  background: transparent;
+padding: 0;
+
+}
+.relative{
+  margin:0.1rem 0;
+}
+</style>

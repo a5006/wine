@@ -1,0 +1,51 @@
+<template>
+  <div id="app">
+    <div class="fixBox">
+      <van-loading v-show="loading" />
+    </div>
+    <div class="container">
+      <router-view />
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'home',
+  data() {
+    return {}
+  },
+  components: {},
+  computed: {
+    loading() {
+      return this.$store.state.loading
+    }
+  }
+}
+</script>
+
+<style >
+.gray{
+  color: #333;
+}
+.fixBox {
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  right: 0;
+  margin: auto;
+  text-align: center;
+  top: 2rem;
+}
+body{
+  background: #fafafa;
+}
+.container {
+  position: relative;
+  top: 46px;
+}
+.pad_container{
+position: relative;  width: 9.6rem;
+  margin: 0 auto;
+}
+</style>

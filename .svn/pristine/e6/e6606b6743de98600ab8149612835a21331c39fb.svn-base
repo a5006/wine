@@ -1,0 +1,94 @@
+<template>
+  <div>
+    <Header title="test" back="1"/>
+ <!-- <img src="../assets/icons/about.png" alt="">
+  <img src="../assets/icons/about.png" alt=""> -->
+  </div>
+</template>
+
+<script>
+// @ is an alias to /src
+import Header from '@/components/header.vue'
+export default {
+  components: { Header },
+  data() {
+    return {
+      show: false,
+      inputVal: '123',
+      areaList: {
+        province_list: {
+          110000: '北京市',
+          120000: '天津市'
+        },
+        city_list: {
+          110100: '北京市',
+          110200: '县',
+          120100: '天津市',
+          120200: '县'
+        },
+        county_list: {
+          110101: '东城区',
+          110102: '西城区',
+          110105: '朝阳区',
+          110106: '丰台区',
+          120101: '和平区',
+          120102: '河东区',
+          120103: '河西区',
+          120104: '南开区',
+          120105: '河北区'
+          // ....
+        }
+      },
+      searchResult: []
+    }
+  },
+
+  methods: {
+    handleShow() {
+      this.show = true
+      document.activeElement.blur()
+    },
+    onSave() {
+      this.$toast('提示文案')
+    },
+    onDelete() {
+      // this.$toast('提示文案')
+      this.inputVal = this.inputVal.slice(0, this.inputVal.length - 1)
+    },
+    onChangeDetail(val) {
+      if (val) {
+        this.searchResult = [
+          {
+            name: '黄龙万科中心',
+            address: '杭州市西湖区'
+          }
+        ]
+      } else {
+        this.searchResult = []
+      }
+    },
+    onInput(value) {
+      this.$toast(value)
+      this.inputVal += value
+    }
+  },
+  mounted() {
+    this.$store.commit('setLoading', 'true')
+    this.$ajax({ url: '/main/test' }).then(res => console.log(res))
+  },
+  computed: {
+    ifLoading() {
+      return this.$store.state.loading
+    }
+  }
+}
+</script>
+
+<style lang="postcss">
+.test {
+  background: lightblue;
+  width: 9rem;
+  font: 20px sans-serif;
+  color: #fff;
+}
+</style>

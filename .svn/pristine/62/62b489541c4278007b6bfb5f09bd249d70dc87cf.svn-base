@@ -1,0 +1,69 @@
+<template>
+  <div>
+    <Gheader title="企业介绍" back="1" />
+
+    <div class="space_container content">
+      <p class="title">{{title}}</p>
+      <p class="article" v-html="content" ></p>
+    </div>
+  </div>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      title: '测试标题',
+      content: `<div><p style="font-size:24px;">  甲方授权乙地区的独家代理商，全面负责该地区的销售和经销商管理。
+甲方不得在乙方代理区域内另设其他代理或经销商。如出现上述情况，甲方须退还乙方保证金，乙方有权立即终止代理合同及得到相应补偿。
+乙方严禁跨区域窜货，对有跨区域窜货行为的乙方，甲方有权要求乙方无条件收回发出的全部货物，费用乙方全部承担；如果乙方不收回货物，甲方将取消其代理资格，本合同将自动终止，一切后果由乙方承担。
+对于乙方代理的销售区域，乙方可以根据实际情况制订销售政策，原则上甲方不予干涉，但乙方对于自己以及下属经销商的经销行为负无限连带责任。
+四、代理期限
+本合同的代理期限为壹年，从本合同签订之日起至 年 月 日止。双方可根据本合同的约定提前终止或续期。
+乙方要求对本合同续期的，应至少在本合同期限届满前提前壹个月向甲方书面提出。甲方同意的，与乙方签订续期合同。
+甲、乙双方约定，在本合同期限届满时，乙方满足以下条件可以续约：（1）较好地履行了本合同的义务，没有发生过重大违约行为；（2）已经向甲方支付了到期的全部款项；（3）签署放弃可针对甲方提起诉讼和仲裁的文件。
+最低代理销售量
+乙方承诺向甲方的订货量为每月平均 ，如果壹年内不能完成销售指标的，甲方有权取消乙方代理资格。
+　　六、代理商品价格
+配送价格：甲方向乙方统一配送产品的价格。
+销售价格：乙方应当按照甲方建议（规定）的零售价格销售产品（服务）。如果甲方建议（规定）的零售价格不符合本地区市场情况，乙方需调整销售价格时，应当向甲方报告。甲方应当根据系统的统一性要求和乙方所处地区的市场情况综合考虑，作出调整价格的决定。
+　　七、奖励
+　　乙方年销售量达到 ，甲方赠送给乙方 ；年销售量达到 ，甲方赠送乙方
+　　八、商情报告
+ </p>
+</div>`
+    }
+  },
+  mounted(){
+  this.content = this.content.replace(/\n/g,"<br/>").replace(/font-size:\d+px/g,function(){
+const arg = Array.from(arguments)
+let fs = arg[0].match(/\d+/)[0]/75
+return `font-size:${fs}rem`;
+  })
+  this.content = this.content.replace(/\s/g," &nbsp ")
+
+}
+}
+</script>
+<style scoped>
+.content {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
+  background: #fff;
+  padding: 0.4rem;
+  box-sizing: border-box;
+margin-top: .5rem;
+margin-bottom: .5rem;
+}
+.title{
+text-align: center;
+
+font-size:0.4rem;
+font-family:PingFang SC;
+font-weight:500;
+color:rgba(231,0,2,1);
+line-height:50px;
+}
+.article{
+  font-size: 24px;color: #333;
+}
+</style>

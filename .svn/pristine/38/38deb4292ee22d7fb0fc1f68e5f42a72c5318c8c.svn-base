@@ -1,0 +1,109 @@
+<template>
+  <div class="addr_content">
+    <img :src="icon" alt v-if="icon"/>
+    <div class="addr" v-if="!list">
+      <div class="info">
+        <p class="name" :style="myColor">{{address.name}}</p>
+        <p class="phone">{{address.mobile}}</p>
+      </div>
+      <p v-if="address.address" class="address">{{address.address}}</p>
+    </div>
+    <div class="del_list" v-else>
+      <div class="addr" v-for="item in address" :key="item.id">
+        <div class="info">
+          <p class="time">{{item.time}}</p>
+        </div>
+        <p class="pos">{{item.pos}}</p>
+      </div>
+    </div>
+    <van-icon v-if="address.mobile||to" name="arrow" @click="handleJump" />
+  </div>
+</template>
+<script>
+export default {
+  props: {
+    to: {},
+    address: {},
+    color: {},
+    icon: {
+      default:require('../assets/icons/other/address.png')
+    }
+  },
+  methods: {
+    handleJump() {}
+  },
+  computed: {
+    myColor() {
+      if (this.color) {
+        let val = `color:${this.color};`
+        return val
+      } else {
+        return ''
+      }
+    },
+    list() {
+      console.log(
+        Object.prototype.toString.call(this.address) === '[object Array]'
+      )
+      return Object.prototype.toString.call(this.address) === '[object Array]'
+    }
+  },
+  mounted() {
+    console.log(this.address)
+  },
+  watch:{
+    address(d){
+      console.log(d)
+    }
+  }
+}
+</script>
+<style scoped>
+.addr_content {
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0px 0.0267rem 0.08rem 0px rgba(0, 0, 0, 0.15);
+  border-radius: 0.2rem;
+  font-size: 0.4rem;
+  padding: 0.3rem;
+  box-sizing: border-box;
+  margin-bottom: 0.2rem;
+}
+img {
+  width: 1.0133rem;
+  height: 0.9067rem;
+}
+.del_list {
+  color: #f96b16;
+}
+.del_list .addr {
+  margin: 0.2rem 0;
+  margin-left: 0.1rem;
+}
+.addr {
+  flex: 2;
+  margin: 0 0.5rem;
+  align-items: center;
+}
+.name {
+  color: #666;
+}
+.info {
+  display: flex;
+}
+.phone {
+  margin-left: 0.2rem;
+  color: #999;
+}
+.address,
+.delivery {
+  color: #666;
+  margin: 0.2rem 0;
+  font-size: 0.3467rem;
+}
+.pos {
+  color: #f96b16;
+}
+</style>

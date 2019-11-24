@@ -1,0 +1,141 @@
+<template>
+  <div>
+    <Gheader title="我的积分" back="1" />
+    <!-- 当前积分 -->
+    <div class="header_con">
+      <div class="left">
+        <p>当前积分</p>
+        <p class="num">14000</p>
+        <small>现金：积分=1：1；满100可兑换</small>
+      </div>
+      <div class="right"></div>
+    </div>
+
+<!-- 兑换积分 -->
+<div class="exchange">
+  立即兑换
+</div>
+<p class="exNum">
+  已经成功兑换{{num}}
+</p>
+    <div class="pad_container">
+      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+        <van-cell v-for="item in list" :key="item">
+          <GradeCard price="20" check="throuth" time="2019-12-12" grade="12312" />
+        </van-cell>
+      </van-list>
+    </div>
+  </div>
+</template>
+<script>
+import GradeCard from '../components/GradeCard'
+export default {
+  components: {
+    GradeCard
+  },
+  data() {
+    return {
+      list: [],
+      menuList: [
+        { title: '审核' },
+        { title: '直推获得积分' },
+        { title: '业绩奖励积分' }
+      ],
+      active: 2,
+      num:12312,
+      loading: false,
+      finished: false
+    }
+  },
+  methods: {
+    onLoad() {
+      // 异步更新数据
+      setTimeout(() => {
+        for (let i = 0; i < 10; i++) {
+          this.list.push(this.list.length + 1)
+        }
+        // 加载状态结束
+        this.loading = false
+
+        // 数据全部加载完成
+        if (this.list.length >= 40) {
+          this.finished = true
+        }
+      }, 500)
+    }
+  }
+}
+</script>
+<style scoped>
+.header_con {
+  width: 9.5733rem;
+  height: 4.24rem;
+  /* background-color: rgba(231, 0, 2, 1); */
+  background-image: url('../assets/icons/other/bg_w.png');
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-position: center;
+  box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
+  border-radius: 0.2rem;
+  margin: 0.2rem auto;
+color:#E70002;
+}
+.header_con {
+  font-size: 0.4rem;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.header_con p,
+.header_con div,
+small {
+  color: #E70002
+}
+.header_con .num {
+  color: #E70002;
+  font-size: 0.96rem;
+}
+.header_con .right {
+  display: flex;
+  width: 2.0133rem;
+  height: 0.7467rem;
+  border: 0.0267rem solid rgba(255, 255, 255, 1);
+  border-radius: 0.3733rem;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+.van-tab__pane {
+  box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
+  border-radius: 0.1333rem;
+  overflow: hidden;
+  width: 9.6rem;
+  margin: 0.2rem auto;
+}
+.right::before {
+  content: '';
+  display: inline-block;
+  width: 0.4rem;
+  height: 0.4rem;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  background-image: url('../assets/icons/other/exchange.png');
+}
+.exchange{
+  width:9rem;
+height:1.3467rem;
+text-align: center;
+background:#E70002;
+line-height:1.3467rem; 
+margin: .2rem auto;
+margin-top: .3rem;
+color: #fff;
+border-radius: 0.7rem;
+}
+.exNum{
+  color: #E70002;
+  font-size: 0.4rem;
+  padding: 0 .4rem;
+}
+</style>

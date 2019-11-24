@@ -1,0 +1,71 @@
+
+const setStateFn = (stateName) => {
+  return function (state, val) {
+    state[stateName] = val
+
+  }
+}
+
+let fnNameArr = [
+  {setLoading: 'loading'}, //loading加载
+  { setSuc: 'suc' }, //成功
+  { setWarn: 'warn' }, //警告
+  { setRegInfo: 'regInfo' },//是否注册
+  { setErr: 'err' },//错误弹窗
+  { setIndexInfo: 'indexData' },//首页
+  { setHelpList: 'helpList' },//帮助列表
+  { setHelpDetail: 'helpDetail' },//帮助详情
+  { setMyInfo: 'myInfo' },//我的
+  { setRetailList:'retailGoodsList'},//零售区
+  { setAgentList: 'agentGoodsList' },//代理区
+  { setMemberGoodsList: 'memberGoodsList' },//会员区
+  { setSpecialList: 'specialGoodsList' },//定制区
+  { setGoodsDetail:'goodsDetail'}, //零售区详情
+  { setCouponList: 'couponObj' }, //代理券
+  {setMsgList:'msgList'},//消息列表
+  { setMsgDetail: 'msgDetail' },//消息列表
+  { setBankList: 'bankList' },//银行卡列表
+  { setAllBankList: 'allBankList' },//银行卡列表
+  { editBank: 'bankInfo' },//银行卡编辑
+  { addBank: 'bankInfo' },//银行卡添加
+  { setBankInfo: 'bankCard' },//银行卡信息
+  { setAddrList: 'addrList' },//地址列表
+  { addAddr: 'addAddr' },//增加地址
+  { editArr: 'addAddr' },//增加地址
+  { delAddr: 'delAddr' },//删除地址
+  { getAddr: 'addrInfo' },//获取地址
+  { getTeamMember: 'teamMember' },//团队人数
+  { getCode: 'code' },//推广二维码
+
+
+]
+let obj = {}
+fnNameArr.forEach(item => {
+  obj[Object.keys(item)[0]] = setStateFn(Object.values(item)[0])
+})
+
+export default {
+  ...obj
+  // setLoading(state, bol) {
+  //   state.loading = bol
+  // },
+  // setRegInfo(state, data) {
+  //   state.regInfo = data
+  // },
+  // setErr(state, data) {
+  //   state.err = data
+  // },
+  // // 首页
+  // setIndexInfo(state, data) {
+  //   state.indexData = data
+  // },
+  // setHelpList(state, data) {
+  //   state.helpList = data
+  // },
+  // setHelpDetail(state, data) {
+  //   state.helpDetail = data
+  // },
+  // setMyInfo(state, data) {
+  //   state.myInfo = data
+  // }
+}
