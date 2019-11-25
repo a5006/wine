@@ -6,7 +6,7 @@
     <!-- 轮播 -->
     <van-swipe :autoplay="3000" indicator-color="#E70002">
       <van-swipe-item v-for="(item, index) in banner" :key="index" @click="handleClickSwiper(item)">
-        <img class="img" v-lazy="item.img" />
+        <img class="img" v-lazy="item" />
       </van-swipe-item>
     </van-swipe>
 
@@ -30,9 +30,9 @@
         </div>-->
       </div>
       <!-- 赠送 -->
-      <div class="sub_desc flex">
+      <div class="sub_desc flex" v-if="ticketType">
         <img src="../assets/icons/other/pen.png" alt />
-        <p>赠送{{ticket}}张代理券</p>
+        <p>{{ticketType}}{{ticket}}张代理券</p>
       </div>
       <p class="title">{{goodsName}}</p>
       <div class="document flex" v-if="doc">
@@ -225,6 +225,16 @@ export default {
     }
   },
   computed: {
+    ticketType(){
+      switch (this.type) {
+        case 'retail':
+            return '赠'
+      case 'agent':
+        return '需'
+  default:
+    return ''
+      }
+    },
     regInfo() {
       return this.$store.state.regInfo
     },
@@ -262,15 +272,15 @@ export default {
     dataObj(data) {
       console.log(data)
       this.goodsName = data.goods_name
-      this.price = data.price
-      this.ticket = data.dlq_add_nums
+      this.price = parseFloat(data.price)/100
+      this.ticket = data.dlq_add_nums||data.dlq_need_nums
       this.content = this.formatContent(data.goods_desc)
       this.skuData = data
       console.log(this.skuData)
-      this.banner = data.goods_attr['1021'].children.map(item => {
-        item.img = this.formatImg(item.cover)
-        return item
-      })
+      let imgs = data.goods_img.split("|")
+  imgs = imgs.filter(item=>!!item)
+  this.banner = imgs.map(item=>this.formatImg(item))
+      console.log(this.banner)
     }
   },
   mounted() {

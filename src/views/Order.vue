@@ -4,11 +4,19 @@
 
     <div class="pad_container">
       <!-- 地址 -->
-      <OrderAddress :address="address" />
+<router-link  to="/myAddr" tag="div" >
+    <OrderAddress :address="address" v-if="Object.keys(address).length"/>
+      <div class="addAddr" v-else>
+      添加地址
+       <van-icon name="arrow" />
+         </div>
+</router-link>
+    
+    
       <!-- 购物车 -->
       <div class="card">
         <!-- 商品图 -->
-        <GoodsCard :num="buy_num" :price="price" :desc="desc" :title="title" :thumb="thumb" />
+        <GoodsCard :num="buy_num" :price="parseFloat(price)/100" :desc="desc" :title="title" :thumb="thumb" />
         <!-- 购买数量 -->
         <div class="step">
           <p>购买数量</p>
@@ -26,13 +34,13 @@
           <van-checkbox v-model="pocket_check" shape="square" checked-color="#E70002">钱包余额</van-checkbox>
           <p class="money">(余额￥{{money}})</p>
         </div>
-        <p class="ticket_num small">可抵扣￥{{money}}</p>
+        <p class="ticket_num small">可抵扣￥{{countMoney}}</p>
       </div>
       <!-- 付款 -->
       <div class="footer">
         <p>
           共 {{buy_num}} 件，合计
-          <b>￥{{all_price}}</b>
+          <b>￥{{parseFloat(all_price)/100}}</b>
         </p>
         <van-button type="default" :loading="btn_loading" loading-text="提交中.." @click="submitPay">付款</van-button>
       </div>
@@ -58,10 +66,12 @@ export default {
       money: '',
       title: '',
       addr_id: '',
+      countMoney:"",
       period_id: '',
       desc: '',
       price: '',
       qbdk: 0,
+      midPrice:"",
       source: '',
       thumb: '',
       activeIcon: require('../assets/icons/other/radio_c.png'),
@@ -78,6 +88,19 @@ export default {
     pocket_check(d) {
       console.log(d)
       this.qbdk = d ? 1 : 0
+
+    if(d){
+       this.all_price= parseFloat(this.all_price) -parseFloat(this.money)<=0?0:parseFloat(this.all_price) -parseFloat(this.money)
+       if(parseFloat(this.money)>parseFloat(this.all_price)){
+             this.countMoney = this.midPrice/100
+       }else{
+    this.countMoney = this.all_price/100
+       }
+   
+    }else{
+      this.all_price = this.midPrice
+      this.countMoney =0
+    }
     },
     buy_num(d) {
       this.all_price = d * this.price
@@ -104,7 +127,7 @@ export default {
     createOrder(d){
       console.log(d)
    if(d.topay){
-        window.location.href = d.topay+'&backup=https://jhhy.vsapp.cn/mobile/me'
+        window.location.href = d.topay+'&backurl=/h5/me'
    }
     },
   },
@@ -151,7 +174,7 @@ export default {
         goods_name,
         buy_num,
         order_num
-      } = this.$route.params
+      } = this.$route.query
       this.title = goods_name
       this.desc = `度数：${name}`
       this.price = price
@@ -160,6 +183,7 @@ export default {
       this.thumb = img
       this.ticket_num = dlq_need_nums || dlq_add_nums
       this.all_price = price * buy_num
+      this.midPrice = this.all_price
       this.source = source
       this.goods_id = goods_id
       this.period_id = period_id
@@ -193,6 +217,14 @@ export default {
 }
 </script>
 <style scoped>
+.addAddr{
+  background: #fff;
+  padding: .4rem ;
+box-sizing: border-box;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
 .order_container {
   font-size: 0.4rem;
 }

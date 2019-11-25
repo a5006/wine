@@ -42,7 +42,7 @@
         :tag="item.tag"
         :tagP="item.tagP"
         @choose="handleChoose(item,'retail',lsq_period_id)"
-        @buy="handleBuy(item.id)"
+        @buy="handleChoose(item,'retail',lsq_period_id)"
       />
       <!-- 代理区 -->
       <TypeTitle :icon="typeTitle[1].icon" :time="agentTime" :title="typeTitle[1].title"
@@ -56,9 +56,10 @@
         :price="formatPrice(item.price)"
         :bgImg="item.bgImg"
         :btnName="item.btnName"
-        :tag="item.tag"
+        tag="需"
         :tagP="item.tagP"
           @choose="handleChoose(item,'agent',dlq_period_id)"
+               @buy="handleChoose(item,'agent',dlq_period_id)"
       />
 
       <!-- 会员尊享 -->
@@ -74,6 +75,7 @@
           :btnName="item.btnName"
           :img="item.img"
               @choose="handleChoose(item,'member')"
+                  @buy="handleChoose(item,'member')"
         ></ShopCardCol>
       </div>
       <!-- 个性化定制 -->
@@ -89,6 +91,7 @@
           :btnName="item.btnName"
           :img="item.img"
             @choose="handleChoose(item,'special')"
+                  @buy="handleChoose(item,'special')"
         >
           <div slot="footer">
             <div class="price_box" @click="handleCheck(item.id)">

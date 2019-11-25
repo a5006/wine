@@ -1,7 +1,7 @@
 <template>
   <div>
     <Gheader title="我的订单" back="1" />
-    
+
     <!-- tabs -->
     <van-tabs v-model="active" sticky @click="switchTab">
       <van-tab class="con" :title="item.title" v-for="item in menuList" :key="item.title"></van-tab>
@@ -22,8 +22,14 @@
     <!-- 列表 -->
     <div class="list pad_container">
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-        <div class="list_item" v-for="item in list" :key="item.order_id">
+        <div
+          class="list_item"
+          v-for="item in list"
+          :key="item.order_id"
+         
+        >
           <SaleCard
+           @routerLink="navigate(item.order_id)"
             :type="type"
             :sale_nums="item.sale_nums"
             :remain_nums="item.remain_nums"
@@ -95,10 +101,20 @@ export default {
           return
       }
     },
+    navigate(id) {
+      console.log(id,this.source)
+      this.$router.push({
+        name: 'normalOrder',
+        params: {
+          id,
+          source: this.source
+        }
+      })
+    },
     // 支付
-    handlePay(d){
+    handlePay(d) {
       console.log(d)
-      window.location.href = `https://jhhy.vsapp.cn/mobile/pay/index?order_num=${this.order_num}&backup=https://jhhy.vsapp.cn/mobile/me`
+      window.location.href = `https://jhhy.vsapp.cn/mobile/pay/index?order_num=${this.order_num}&backurl=/h5/me`
     },
     onLoad() {
       this.queryOrderList()
@@ -129,7 +145,7 @@ export default {
     }
   },
   computed: {
-    handleOrder(){
+    handleOrder() {
       return this.$store.state.handleOrder
     },
     myOrderList() {
@@ -149,24 +165,27 @@ export default {
   },
   watch: {
     // 如果操作了就要刷新页面
-    handleOrder:{
-      handler(d){
+    handleOrder: {
+      handler(d) {
         console.log(d)
-        if(d.data){
+        if (d.data) {
           this.queryOrderList()
         }
       },
-      deep:true,
+      deep: true
     },
     myOrderList(d) {
       console.log(d)
       let { list, nums } = d
-      list = list.map(item => {
+      list = list.length&&list.map(item => {
         console.log(item)
         item.img = this.formatImg(item.goods_cover)
         item.getTime = this.formatDate(item.ctime)
         item.endTime = isNaN(item.etime * 1000) ? null : item.etime * 1000
         console.log(item.endTime)
+          console.log(item.order_amount)
+        item.order_amount = parseFloat(item.order_amount)/100
+        console.log(item.order_amount)
         return item
       })
       this.list = [...this.list, ...list]
@@ -187,9 +206,9 @@ export default {
       this.resetQuery()
     }
   },
-  mounted(){
-  this.active = this.$route.query.active||0
-  },
+  mounted() {
+    this.active = this.$route.query.active || 0
+  }
 }
 </script>
 <style scoped>

@@ -1,0 +1,202 @@
+<template>
+  <div>
+    <van-popup v-model="modal" position="bottom" @closed="handleCls">
+      <SkuCard
+        :img="img"
+        :num="ticket"
+        :price="skuData.price"
+        :title="skuData.goods_name"
+        :tickP="ticketP"
+      />
+
+      <div class="pad_container">
+        <!-- 度数 -->
+        <p>度数</p>
+        <div class="desc">
+          <div
+            :class="activeCls(idx)"
+            v-for="(item,idx) in list"
+            :key="item"
+            @click="handleChoose(item,idx)"
+          >{{item}}</div>
+        </div>
+        <!-- 选择数量 -->
+        <div class="count flex_bet">
+          <p>购买数量</p>
+          <van-stepper v-model="count" button-size=".6rem" />
+        </div>
+        <!-- 抢购俺妞妞 -->
+        <div class="buy" @click="createOrder">立即抢购</div>
+      </div>
+    </van-popup>
+  </div>
+</template>
+<script>
+import SkuCard from '../components/SkuCard'
+export default {
+  components: {
+    SkuCard
+  },
+  props: {
+    show: {
+      default: false
+    },
+    skuData: {}
+  },
+  data() {
+    return {
+      img: '',
+      modal: false,
+      count: 1,
+      ticket: '',
+      name: '',
+      attr_id: '',
+      active: 0,
+      currentItem: {},
+      ticketP: '',
+      list: []
+    }
+  },
+  watch: {
+    show(s) {
+      this.modal = s
+    },
+    skuData(d) {
+      this.list = d.goods_attr['1021'].children.map(item => {
+        return item.name
+      })
+      console.log(this.skuData, '‘阿萨德')
+      d.goods_img = d.goods_img.split('|||')[0]
+      this.img = this.formatImg(d.goods_img)
+      this.ticket = d.dlq_add_nums || d.dlq_need_nums
+      if (d.dlq_add_nums) {
+        this.ticketP = '赠送代理资格券'
+      } else if (d.dlq_need_nums) {
+        this.ticketP = '需要代理资格券'
+      }
+
+      let first =     this.skuData.goods_attr['1021'].children[0]
+     this.name = first.name
+          this.attr_id = first.attr_id
+          this.img = this.formatImg(first.cover)
+  
+    }
+  },
+  methods: {
+    handleCls() {
+      this.modal = false
+      this.$emit('handleCls', false)
+    },
+    handleChoose(name, idx) {
+      this.skuData.goods_attr['1021'].children.map(item => {
+        if (item.name === name) {
+          console.log(item)
+          // 选择
+          this.name = item.name
+          this.attr_id = item.attr_id
+          this.img = this.formatImg(item.cover)
+        }
+      })
+
+      this.active = idx
+    },
+    activeCls(idx) {
+      if (this.active === idx) {
+        return 'item active'
+      } else {
+        return 'item'
+      }
+    },
+    // 获取是零售区还是会员区还是代理区
+    getSource() {
+      let { type } = this.$route.query
+      switch (type) {
+        case 'retail':
+          return 1
+        case 'agent':
+          return 3
+        case 'member':
+          return 2
+        default:
+          return ''
+      }
+    },
+    createOrder() {
+      let source = this.getSource()
+      let {
+        goods_id,
+        price,
+        period_id,
+        dlq_add_nums,
+        dlq_need_nums,
+        goods_name
+      } = this.skuData
+      //订单号
+      let attr_id = this.attr_id
+      let buy_num = this.count
+      let name = this.name
+      let img = this.img
+      let order_num = new Date().getTime()
+      //带参数到订单
+      this.$router.push({
+        name: 'order',
+        params: {
+          source,
+          goods_id,
+          price,
+          period_id,
+          attr_id,
+          name,
+          dlq_add_nums,
+          dlq_need_nums,
+          img,
+          goods_name,
+          buy_num,
+          order_num
+        }
+      })
+    }
+  },
+  mounted() {}
+}
+</script>
+<style scoped>
+p {
+  font-size: 0.3733rem;
+}
+.buy {
+  left: 0;
+  right: 0;
+  bottom: 1rem;
+  margin: auto;
+  width: 5.0133rem;
+  height: 1.3867rem;
+  color: #fff;
+  background-image: url('../assets/icons/home/buy.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  background-color: transparent;
+  border: none;
+  box-sizing: border-box;
+  padding-right: 0.4rem;
+  font-size: 0.36rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.5rem;
+  margin: 1rem auto;
+}
+.item {
+  display: inline-block;
+  margin: 0.1rem;
+  border: 0.0267rem solid rgba(193, 193, 193, 1);
+  font-size: 0.36rem;
+  border-radius: 0.2rem;
+  padding: 0.2rem 0.4rem;
+}
+.active {
+  border: 0.0267rem solid #ff0000;
+}
+</style>

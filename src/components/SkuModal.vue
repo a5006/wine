@@ -49,9 +49,9 @@ export default {
       modal: false,
       count: 1,
       ticket: '',
-      name:"",
+      name: '',
       attr_id: '',
-      active: null,
+      active: 0,
       currentItem: {},
       ticketP: '',
       list: []
@@ -75,7 +75,11 @@ export default {
         this.ticketP = '需要代理资格券'
       }
 
-      console.log()
+      let first =     this.skuData.goods_attr['1021'].children[0]
+     this.name = first.name
+          this.attr_id = first.attr_id
+          this.img = this.formatImg(first.cover)
+  
     }
   },
   methods: {
@@ -119,17 +123,24 @@ export default {
     },
     createOrder() {
       let source = this.getSource()
-      let { goods_id, price, period_id,dlq_add_nums,dlq_need_nums ,goods_name} = this.skuData
+      let {
+        goods_id,
+        price,
+        period_id,
+        dlq_add_nums,
+        dlq_need_nums,
+        goods_name
+      } = this.skuData
       //订单号
       let attr_id = this.attr_id
       let buy_num = this.count
-      let name  = this.name 
+      let name = this.name
       let img = this.img
       let order_num = new Date().getTime()
-//带参数到订单
+      //带参数到订单
       this.$router.push({
         name: 'order',
-        params: {
+        query: {
           source,
           goods_id,
           price,
@@ -137,9 +148,9 @@ export default {
           attr_id,
           name,
           dlq_add_nums,
-dlq_need_nums,
-img,
-goods_name,
+          dlq_need_nums,
+          img,
+          goods_name,
           buy_num,
           order_num
         }
