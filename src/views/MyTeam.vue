@@ -49,16 +49,16 @@ export default {
           name: '一级',
           val: ''
         },
-        {
-          id: 1,
-          name: '二级',
-          val: ''
-        },
-        {
-          id: 2,
-          name: '三级',
-          val: ''
-        },
+        // {
+        //   id: 1,
+        //   name: '二级',
+        //   val: ''
+        // },
+        // {
+        //   id: 2,
+        //   name: '三级',
+        //   val: ''
+        // },
         {
           id: 3,
           name: '总人数',
@@ -68,8 +68,8 @@ export default {
       list: [],
       menuList: [
         { title: '一级' },
-        { title: '二级' },
-        { title: '三级' },
+        // { title: '二级' },
+        // { title: '三级' },
         { title: '总人数' }
       ],
       active: 0,
@@ -209,7 +209,7 @@ export default {
   justify-content: space-around;
   align-items: center;
   height: 1rem;
-  margin: 0.4rem 0;
+  margin: 0.4rem .5rem;
 }
 p.item_title {
   color: #333;
@@ -229,5 +229,8 @@ p.item_title {
 .van-cell {
   padding: 0;
   padding: 0.4rem 0;
+}
+div .sub_con{
+justify-content: center;
 }
 </style>

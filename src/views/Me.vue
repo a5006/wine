@@ -13,7 +13,7 @@
       </div>
       <div class="header_title flex_bet sub_con">
         <router-link tag="div" to="/myMoney" class="header_item">
-          <p class="item_title">{{money}}</p>
+          <p class="item_title">{{formatPrice(money)}}</p>
           <p class="small">我的钱包</p>
         </router-link>
         <router-link tag="div" to="/myGrade" class="header_item">

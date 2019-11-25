@@ -83,7 +83,7 @@ export default {
 
       checked: false,
       text: '产品直推人和购买人可各获得X张代理资格券',
-      price: 12,
+      price:"",
       time: 10000000,
       banner: [],
       content: ''

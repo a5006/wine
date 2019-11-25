@@ -59,7 +59,7 @@ export default {
       this.$emit('handleSale', e)
     },
     handleCancelSale(e) {
-      this.$emit('handleSale', e)
+      this.$emit('handleCancelSale', e)
     },
     handlePay(e) {
       this.$emit('handlePay', e)

@@ -4,7 +4,7 @@
       <SkuCard
         :img="img"
         :num="ticket"
-        :price="skuData.price"
+        :price="formatPrice(skuData.price)"
         :title="skuData.goods_name"
         :tickP="ticketP"
       />

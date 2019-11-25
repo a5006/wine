@@ -3,15 +3,15 @@
     <Gheader title="团队业绩" back="1" />
     <!-- 下拉列表 -->
     <van-dropdown-menu>
-      <van-dropdown-item v-model="year_month" :options="yearMonthDate"  @change="handleSelect" />
-      <van-dropdown-item v-model="qs" :options="seasonDate"   @change="handleSelect"/>
+      <van-dropdown-item v-model="year_month" :options="yearMonthDate" @change="handleSelect" />
+      <van-dropdown-item v-model="qs" :options="seasonDate" @change="handleSelect" />
     </van-dropdown-menu>
 
     <!-- 业绩展示 -->
     <div class="header_con">
       <!-- 业绩 -->
       <div class="achieveBox flex_bet">
-        <p class="item" v-for="item in achiveTitleList" :key="item.id">￥{{item.value}}</p>
+        <p class="item" v-for="item in achiveTitleList" :key="item.id">￥{{formatPrice(item.value)}}</p>
       </div>
       <!-- tab -->
       <van-tabs v-model="active" @click="switchTab">
@@ -40,11 +40,15 @@
         <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
           <div class="list_item" v-for="item in list" :key="item.order_id">
             <AchieveCard
-              :img="item.goods_cover"
-              :price="item.price"
-              :title="item.goods_name"
-              :desc="item.goods_attr"
-              :num="item.num"
+              :img="formatImg(item.order_goods.goods_cover)"
+              :price="formatPrice(item.order_goods.goods_price)"
+              :title="item.order_goods.goods_name"
+              :desc="item.order_goods.goods_attr"
+              :num="item.order_goods.num"
+              :ztr_name="item.ztr_name"
+              :ztr_phone ="item.ztr_phone"
+              :pay_amount="formatPrice(item.pay_amount)"
+              :zt_score="formatPrice(item.zt_score)"
             />
           </div>
         </van-list>
@@ -77,23 +81,15 @@ export default {
       levelMenuList: [
         { title: '我的' },
         { title: '一级' },
-        { title: '二级' },
-        { title: '三级' }
+        // { title: '二级' },
+        // { title: '三级' }
       ],
       qs: '',
       yearMonthDate: [],
       seasonDate: [],
       loading: false,
       finished: false,
-      list: [
-        {
-          goods_cover:"asdf",
-price:"asdf",
-goods_name:"asdf",
-num:1,
-goods_attr:"asdf",
-        }
-      ],
+      list: [],
       limit: 10,
       total: 0,
       active: 0
@@ -120,7 +116,8 @@ goods_attr:"asdf",
 
     queryTeamOrderList() {
       let { start, limit, year_month, qs } = this
-      if(year_month===0) return
+      console.log(start)
+      if (year_month === 0) return
       let obj = {
         0: 'self',
         1: 'first',
@@ -142,12 +139,13 @@ goods_attr:"asdf",
     },
     onLoad() {
       this.queryTeamOrderList()
+      console.log(this.start)
       this.start += this.limit
       this.loading = false
     },
-    handleSelect(){
+    handleSelect() {
       console.log(1)
-           this.resetQuery()
+      this.resetQuery()
     },
     switchTab() {
       this.resetQuery()
@@ -180,7 +178,7 @@ goods_attr:"asdf",
       return this.$store.state.teamAchieve
     },
     teamMemberObj() {
-      return this.$store.state.teamMemberList.result
+      return this.$store.state.teamOrderList.result
     },
     type() {
       switch (this.active) {
@@ -218,7 +216,8 @@ goods_attr:"asdf",
       let { yearMonth, season } = d
       if (Array.isArray(yearMonth) && Array.isArray(season)) {
         this.queryTeamAchieve()
-        this.queryTeamOrderList()
+        // this.queryTeamOrderList()
+           this.resetQuery()
       }
     },
     // 团队业绩
@@ -231,9 +230,10 @@ goods_attr:"asdf",
       })
     },
     teamMemberObj(d) {
+      console.log(d,'这里是d')
       let { list, nums } = d
       console.log(list, nums)
-
+        this.order_goods = list.order_goods
       this.list = [...this.list, ...list]
       this.total = nums * 1
       if (this.list.length >= this.total) {

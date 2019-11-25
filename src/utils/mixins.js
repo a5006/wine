@@ -40,8 +40,9 @@ let minit = date.getMinutes()
   },
 // 格式化金额
   formatPrice(num) {
-    return (num * 1 / 100).toFixed(2)
+    return parseFloat(num) / 100
   },
+  
 }
 function vueMixins(Vue){
   Vue.mixin({

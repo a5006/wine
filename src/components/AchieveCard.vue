@@ -9,15 +9,15 @@
       <p>代理寄售-零售</p>
       <div class="mid">
         <p class="small">实付金额</p>
-        <p>￥10000</p>
+        <p>￥{{pay_amount}}</p>
       </div>
       <div>
         <p class="small">获得分利</p>
-        <p>￥10000</p>
+        <p>￥{{zt_score}}</p>
       </div>
     </div>
     <div class="small_box">
-      <p class="small">分利者：张三 1231232121</p>
+      <p class="small">分利者： {{ztr_name}}     {{ztr_phone}}</p>
     </div>
   </div>
 </template>
@@ -29,7 +29,11 @@ export default {
     price: {},
     desc: {},
     title: {},
-    img: {}
+    img: {},
+    ztr_name:{},
+ztr_phone:{},
+pay_amount:{},
+zt_score:{}
   },
   data() {
     return {}
@@ -42,6 +46,7 @@ export default {
   padding: .4rem;
   box-shadow:0px 0.0267rem 0.08rem 0px rgba(0, 0, 0, 0.15);
 border-radius:0.2rem;
+margin: .2rem 0;
 }
 .van-card {
   background: #fff;

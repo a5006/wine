@@ -27,7 +27,7 @@
             :img="formatImg(item.goods_cover)"
             :price="item.goods_price"
             :nums="item.th_nums"
-            :total="item.total_amount"
+            :total="formatPrice(item.total_amount)"
             :btn="btn"
             @handle="handle"
           />

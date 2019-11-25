@@ -159,7 +159,8 @@ export default {
       this.detail = d.my_thbl_order_detail
       this.active = this.detail.status - 1
       this.status = {
-        0: '提货中',
+        // 0: '提货中',
+        0:'可提货',
         1: '提货审核中',
         2: '已发货',
         3: '订单已完成'

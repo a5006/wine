@@ -32,9 +32,9 @@
       <div class="pocket flex_bet">
         <div class="flex">
           <van-checkbox v-model="pocket_check" shape="square" checked-color="#E70002">钱包余额</van-checkbox>
-          <p class="money">(余额￥{{money}})</p>
+          <p class="money">(余额￥{{formatPrice(money)}})</p>
         </div>
-        <p class="ticket_num small">可抵扣￥{{countMoney}}</p>
+        <p class="ticket_num small">可抵扣￥{{formatPrice(countMoney)}}</p>
       </div>
       <!-- 付款 -->
       <div class="footer">
@@ -66,7 +66,7 @@ export default {
       money: '',
       title: '',
       addr_id: '',
-      countMoney:"",
+      countMoney:0,
       period_id: '',
       desc: '',
       price: '',
@@ -88,19 +88,27 @@ export default {
     pocket_check(d) {
       console.log(d)
       this.qbdk = d ? 1 : 0
+if(d){
+  // 可抵扣余额变化
+  this.countMoney = this.all_price>this.money?this.money:this.all_price
+}else{
+  // 可抵扣余额变化
 
-    if(d){
-       this.all_price= parseFloat(this.all_price) -parseFloat(this.money)<=0?0:parseFloat(this.all_price) -parseFloat(this.money)
-       if(parseFloat(this.money)>parseFloat(this.all_price)){
-             this.countMoney = this.midPrice/100
-       }else{
-    this.countMoney = this.all_price/100
-       }
+this.countMoney = 0;
+}
+
+    // if(d){
+    //    this.all_price= parseFloat(this.all_price) -parseFloat(this.money)<=0?0:parseFloat(this.all_price) -parseFloat(this.money)
+    //    if(parseFloat(this.money)>parseFloat(this.all_price)){
+    //          this.countMoney = this.midPrice/100
+    //    }else{
+    // this.countMoney = this.all_price/100
+    //    }
    
-    }else{
-      this.all_price = this.midPrice
-      this.countMoney =0
-    }
+    // }else{
+    //   this.all_price = this.midPrice
+    //   this.countMoney =0
+    // }
     },
     buy_num(d) {
       this.all_price = d * this.price
@@ -127,7 +135,7 @@ export default {
     createOrder(d){
       console.log(d)
    if(d.topay){
-        window.location.href = d.topay+'&backurl=/h5/me'
+        window.location.href = d.topay+'&backurl=https://jhhy.vsapp.cn/h5/#/me'
    }
     },
   },

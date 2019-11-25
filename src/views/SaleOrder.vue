@@ -17,14 +17,14 @@
         </div>
       </van-card>
       <!-- 代理寄售 -->
-      <div class="flex_bet order_content">
+      <div class="flex_bet order_content" v-for="(item,idx) in js_list" :key="idx" v-show="js_list.length">
         <p>代理寄售-零售</p>
         <div>
           <p>实付金额</p>
-          <p class="price">￥1000</p>
+          <p class="price">￥{{item.pay_amount}}</p>
         </div>
         <p>获得分利</p>
-        <p class="price">￥1000</p>
+        <p class="price">￥{{item.js_money}}</p>
       </div>
       <!-- 订单来源 -->
       <div class="order_content">
@@ -93,6 +93,7 @@ export default {
         pay_amount: '',
         qbdk_amount: ''
       },
+      js_list:[],
       status: ''
     }
   },
@@ -140,10 +141,11 @@ export default {
   },
   watch: {
     myOrder(d) {
-      let { order_goods, order_info, status } = d
+      let { order_goods, order_info, status,js_list } = d
       this.order_goods = order_goods
       this.order_info = order_info
       this.status = status
+      this.js_list = js_list
       var obj = {
         1: '零售区',
         2: '会员区',
