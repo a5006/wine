@@ -188,7 +188,7 @@ export default {
             if(this.type==='special'){
               item.btnName = '联系客服'
             }
-            item.tagP = `${item.dlq_add_nums || item.dlq_need_nums}张代理权`
+            item.tagP = `${item.dlq_add_nums || item.dlq_need_nums}张代理券`
             if(!item. dlq_add_nums&&!item.dlq_need_nums){
               item.tag=null
               item.tagP=""

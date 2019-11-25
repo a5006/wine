@@ -5,14 +5,14 @@
       <p class="title">{{title}}</p>
       <p v-if="subTitle" class="subTitle">{{subTitle}}</p>
     </div>
-    <div class="flex" v-if="time">
+    <div class="flex time_content" v-if="time">
       <p>距离结束还有</p>
       <van-count-down class="time" :time="time">
         <template v-slot="timeData">
-                    <span class="item">{{ timeData.days }}</span>
-          <span class="item">{{ timeData.hours }}</span>
-          <span class="item">{{ timeData.minutes }}</span>
-          <span class="item">{{ timeData.seconds }}</span>
+                    <span class="item">{{ timeData.days }}天</span>
+          <span class="item">{{ timeData.hours }}时</span>
+          <span class="item">{{ timeData.minutes }}分</span>
+          <span class="item">{{ timeData.seconds }}秒</span>
         </template>
       </van-count-down>
     </div>
@@ -84,5 +84,9 @@ color:#333;
   font-size: 0.16rem;
   text-align: center;
   background-color: #e70002;
+}
+.time_content{
+  flex:2;
+  font-size: .2rem;
 }
 </style>

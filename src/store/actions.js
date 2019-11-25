@@ -343,7 +343,7 @@ export default {
       if (res.data === 1) {
         commit('setSuc', { msg: '添加成功' })
       } else {
-        commit('setWarn', res.msg || '信息不正确请重试')
+        commit('setWarn', res)
       }
       commit("addAddr", res.data);
     })

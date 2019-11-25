@@ -4,26 +4,31 @@
 
     <div class="pad_container">
       <!-- 地址 -->
-<router-link  to="/myAddr" tag="div" >
-    <OrderAddress :address="address" v-if="Object.keys(address).length"/>
-      <div class="addAddr" v-else>
-      添加地址
-       <van-icon name="arrow" />
-         </div>
-</router-link>
-    
-    
+      <router-link to="/myAddr" tag="div">
+        <OrderAddress :address="address" v-if="Object.keys(address).length" />
+        <div class="addAddr" v-else>
+          添加地址
+          <van-icon name="arrow" />
+        </div>
+      </router-link>
+
       <!-- 购物车 -->
       <div class="card">
         <!-- 商品图 -->
-        <GoodsCard :num="buy_num" :price="parseFloat(price)/100" :desc="desc" :title="title" :thumb="thumb" />
+        <GoodsCard
+          :num="buy_num"
+          :price="parseFloat(price)/100"
+          :desc="desc"
+          :title="title"
+          :thumb="thumb"
+        />
         <!-- 购买数量 -->
-        <div class="step">
+        <!-- <div class="step">
           <p>购买数量</p>
           <van-stepper v-model="buy_num" button-size="22px" />
-        </div>
-        <div class="ticket">
-          <p>需要代理资格券</p>
+        </div> -->
+        <div class="ticket" v-if="word"> 
+          <p>{{word}}代理资格券</p>
           <p class="ticket_num">{{ticket_num}}张</p>
         </div>
       </div>
@@ -63,15 +68,16 @@ export default {
       pocket_check: false,
       ticket_num: 6,
       buy_num: 1,
-      money: '',
+      money: 0,
       title: '',
       addr_id: '',
-      countMoney:0,
+      countMoney: 0,
       period_id: '',
+      midMoney: 0,
       desc: '',
       price: '',
       qbdk: 0,
-      midPrice:"",
+      midPrice: '',
       source: '',
       thumb: '',
       activeIcon: require('../assets/icons/other/radio_c.png'),
@@ -88,36 +94,45 @@ export default {
     pocket_check(d) {
       console.log(d)
       this.qbdk = d ? 1 : 0
-if(d){
-  // 可抵扣余额变化
-  this.countMoney = this.all_price>this.money?this.money:this.all_price
-}else{
-  // 可抵扣余额变化
 
-this.countMoney = 0;
-}
+      if (d) {
+        // 可抵扣余额变化
+        this.countMoney =
+          this.all_price > this.money ? this.money : this.all_price
 
-    // if(d){
-    //    this.all_price= parseFloat(this.all_price) -parseFloat(this.money)<=0?0:parseFloat(this.all_price) -parseFloat(this.money)
-    //    if(parseFloat(this.money)>parseFloat(this.all_price)){
-    //          this.countMoney = this.midPrice/100
-    //    }else{
-    // this.countMoney = this.all_price/100
-    //    }
-   
-    // }else{
-    //   this.all_price = this.midPrice
-    //   this.countMoney =0
-    // }
+        let { all_price, money } = this
+        all_price = parseFloat(all_price)
+        money = parseFloat(money)
+        console.log(all_price, money)
+        if (all_price * 1 > money * 1) {
+          // 合计金额大于钱包金额
+          this.money = 0
+          this.all_price = this.all_price * 1 - this.money * 1
+        } else {
+          this.all_price = 0
+          this.money = money - all_price
+        }
+        // 金额变化
+      } else {
+        // 可抵扣余额变化
+        this.money = this.midMoney
+        this.all_price = this.midPrice
+        this.countMoney = 0
+      }
     },
     buy_num(d) {
       this.all_price = d * this.price
+      this.mid_price = d * this.price
+
+ 
     },
     moneyGrade(d) {
       this.money = d.money
+      this.midMoney = d.money
     },
     //地址
     addrList(d) {
+      console.log(d)
       if (d.length > 0) {
         // 获取默认地址
         let arr = d.map(item => item.default && item)
@@ -130,18 +145,27 @@ this.countMoney = 0;
         this.addr_id = this.address.id
       } else {
         // 没有地址
+        this.address=[]
       }
     },
-    createOrder(d){
+    createOrder(d) {
       console.log(d)
-   if(d.topay){
-        window.location.href = d.topay+'&backurl=https://jhhy.vsapp.cn/h5/#/me'
-   }
-    },
+      if (d.topay) {
+        window.location.href =
+          d.topay + '&backurl=https://jhhy.vsapp.cn/h5/#/me'
+      }else{
+        this.$route.push({
+          path:'/me'
+        })
+      }
+    }
   },
   methods: {
     // 支付
     submitPay() {
+
+
+      
       let {
         order_num,
         goods_id,
@@ -152,9 +176,9 @@ this.countMoney = 0;
         period_id,
         source
       } = this
-  
-      this.$store.dispatch('createOrder',{
-          order_num,
+
+      this.$store.dispatch('createOrder', {
+        order_num,
         goods_id,
         attr_id,
         buy_num,
@@ -163,7 +187,6 @@ this.countMoney = 0;
         period_id,
         source
       })
-
     },
     queryAddrList() {
       this.$store.dispatch('getAddrList')
@@ -204,15 +227,26 @@ this.countMoney = 0;
     }
   },
   computed: {
+    word(){
+      switch (this.source) {
+        case 1:
+          return '赠送'
+    case 3:
+      return '需要'
+
+        default:
+          return '';
+      }
+    },
     addrList() {
       return this.$store.state.addrList
     }, // 我得钱包
     moneyGrade() {
       return this.$store.state.moneyGrade
     },
-    createOrder(){
+    createOrder() {
       return this.$store.state.createOrder
-    },
+    }
   },
 
   mounted() {
@@ -225,13 +259,13 @@ this.countMoney = 0;
 }
 </script>
 <style scoped>
-.addAddr{
+.addAddr {
   background: #fff;
-  padding: .4rem ;
-box-sizing: border-box;
-display: flex;
-justify-content: space-between;
-align-items: center;
+  padding: 0.4rem;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .order_container {
   font-size: 0.4rem;
